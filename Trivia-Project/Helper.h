@@ -4,6 +4,8 @@
 #include <string>
 #include <WinSock2.h>
 
+#include "Defines.h"
+
 using namespace std;
 
 

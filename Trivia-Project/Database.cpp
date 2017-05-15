@@ -61,8 +61,3 @@ bool DataBase::isUserExists(string username)
 		return false;
 	return true;
 }
-
-bool DataBase::addNewUser(string username, string password, string email)
-{
-	
-}

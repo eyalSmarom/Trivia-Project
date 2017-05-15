@@ -25,11 +25,10 @@ private:
 	vector<User*> _players;
 	int _questionNo;
 	int _currQuestionIndex;
+	int _currentTurnAnswers;
+	int _gameId;
 	DataBase _db;
 	map<string, int> _results;
-	int _currentTurnAnswers;
 
-	bool insertGameToDB();
-	void initQuestionFromDB();
 	void sendQuestionToAllUsers();
 };
