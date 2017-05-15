@@ -111,6 +111,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Database.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Helper.h" />
+    <ClInclude Include="Question.h" />
+    <ClInclude Include="ReceivedMessage.h" />
+    <ClInclude Include="Room.h" />
+    <ClInclude Include="sqlite3.h" />
+    <ClInclude Include="TriviaServer.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="WSAInitializer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Database.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="Question.cpp" />
+    <ClCompile Include="ReceivedMessage.cpp" />
+    <ClCompile Include="Room.cpp" />
+    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="sqlite3.c" />
+    <ClCompile Include="TriviaServer.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="WSAInitializer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
