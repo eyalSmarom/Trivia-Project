@@ -14,6 +14,7 @@ class DataBase
 {
 public:
 	DataBase();
+	DataBase(DataBase& other); // Copy c'tor for Game's c'tor
 	~DataBase();
 	bool isUserExists(string username);
 	bool addNewUser(string username, string password, string email);
@@ -24,6 +25,7 @@ public:
 	int insertNewGame();
 	bool updateGameStatus(int status);
 	bool addAnswerToPlayer(int gameId, string username, int questionId, string answer, bool isCorrect, int answerTime);
+
 private:
 	sqlite3* _db;
 	string _filename;
