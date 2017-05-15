@@ -15,15 +15,15 @@ class DataBase
 public:
 	DataBase();
 	~DataBase();
-	bool isUserExists(string);
-	bool addNewUser(string, string, string);
-	bool isUserAndPassMatch(string, string);
-	vector<Question*> initQuestions(int);
+	bool isUserExists(string username);
+	bool addNewUser(string username, string password, string email);
+	bool isUserAndPassMatch(string username, string password);
+	vector<Question*> initQuestions(int questionsNo);
 	vector<Question*> getBestScores();
 	vector<string> getPersonalStatus();
 	int insertNewGame();
-	bool updateGameStatus(int);
-	bool addAnswerToPlayer(int, string, int, string, bool, int);
+	bool updateGameStatus(int status);
+	bool addAnswerToPlayer(int gameId, string username, int questionId, string answer, bool isCorrect, int answerTime);
 private:
 	sqlite3* _db;
 	string _filename;

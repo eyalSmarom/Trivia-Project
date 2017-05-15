@@ -38,6 +38,10 @@ DataBase::DataBase() : _filename(DB_NAME)
 	catch (exception& e)
 	{
 		cout << e.what() << endl;
+
+		/* To Do: Send exit message to all players and exit games because of the glitch 
+		   Until that wouldn't be coded, exit the program for debugging purposes.        */
+
 		exit(1);
 	}
 }
@@ -56,4 +60,9 @@ bool DataBase::isUserExists(string username)
 	if (res != SQLITE_OK)
 		return false;
 	return true;
+}
+
+bool DataBase::addNewUser(string username, string password, string email)
+{
+	
 }
