@@ -11,7 +11,7 @@ class Question;
 class Game
 {
 public:
-	Game(const vector<User*>& players);
+	Game(const vector<User*>& players, int questionNo, DataBase& db);
 	~Game();
 	void sendFirstQuestion();
 	void handleFinishGame();
@@ -21,7 +21,7 @@ public:
 	int getID();
 
 private:
-	vector<Question*> _question;
+	vector<Question*> _questions;
 	vector<User*> _players;
 	int _questionNo;
 	int _currQuestionIndex;
