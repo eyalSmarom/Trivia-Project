@@ -46,6 +46,10 @@ DataBase::DataBase() : _filename(DB_NAME)
 	}
 }
 
+DataBase::DataBase(DataBase & other)
+{
+}
+
 DataBase::~DataBase()
 {
 	sqlite3_close(this->_db);
@@ -60,4 +64,24 @@ bool DataBase::isUserExists(string username)
 	if (res != SQLITE_OK)
 		return false;
 	return true;
+}
+
+vector<Question*> DataBase::initQuestions(int questionsNo)
+{
+	return vector<Question*>();
+}
+
+int DataBase::insertNewGame()
+{
+	return 0;
+}
+
+bool DataBase::updateGameStatus(int status)
+{
+	return false;
+}
+
+bool DataBase::addAnswerToPlayer(int gameId, string username, int questionId, string answer, bool isCorrect, int answerTime)
+{
+	return false;
 }

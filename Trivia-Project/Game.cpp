@@ -16,7 +16,7 @@ Game::Game(const vector<User*>& players, int questionNo, DataBase& db)
 		if (_gameId == -1)
 			throw exception("Couldn't insert game into the database");
 		else
-			_db.initQuestions(questionNo);
+			_questions = _db.initQuestions(questionNo);
 
 		// initiate the players
 		_players = players;
