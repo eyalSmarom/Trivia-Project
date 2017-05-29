@@ -3,7 +3,7 @@
 
 #define DB_NAME "TriviaDB.sqlite"
 
-DataBase::DataBase() : _filename(DB_NAME)
+DataBase::DataBase() : _filename(DB_NAME), _currGameId(0)
 {
 	try
 	{
@@ -39,8 +39,8 @@ DataBase::DataBase() : _filename(DB_NAME)
 	{
 		cout << e.what() << endl;
 
-		/* To Do: Send exit message to all players and exit games because of the glitch 
-		   Until that wouldn't be coded, exit the program for debugging purposes.        */
+		/* To Do: Send exit message to all players and exit games because of the glitch
+		Until that wouldn't be coded, exit the program for debugging purposes.        */
 
 		exit(1);
 	}
@@ -59,29 +59,159 @@ DataBase::~DataBase()
 bool DataBase::isUserExists(string username)
 {
 	string sqlStatement = "SELECT username FROM t_users WHERE username = " + username + ";";
+	sqlite3_stmt *stmt;
+	if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
+		return false;//somthing went wrong
+	while (1)
+	{
+		int s;
+
+		s = sqlite3_step(stmt);//get first row
+		if (s == SQLITE_ROW)
+		{
+			return true;//there is an existing row
+		}
+		else if (s == SQLITE_DONE)
+		{
+			break;
+		}
+		else
+		{
+			return false;//somthing went wrong
+		}
+	}
+	return false;//didnt find
+}
+
+bool DataBase::addNewUser(string username, string password, string email)
+{
+	string sqlStatement = "INSERT INTO t_users(" + username + ", " + password + ", " + email + ");";
 	char* errMessage = nullptr;
 	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK)
 		return false;
-	return true;
+	else
+		return true;
+}
+
+bool DataBase::isUserAndPassMatch(string username, string password)
+{
+	string sqlStatement = "SELECT * FROM t_users WHERE username = " + username + "AND Password = " + password + ";";
+	sqlite3_stmt *stmt;
+	if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
+		return false;//somthing went wrong
+	while (1)
+	{
+		int s;
+
+		s = sqlite3_step(stmt);//get first row
+		if (s == SQLITE_ROW)
+		{
+			return true;//there is an existing row
+		}
+		else if (s == SQLITE_DONE)
+		{
+			break;
+		}
+		else
+		{
+			return false;//somthing went wrong
+		}
+	}
+	return false;//didnt find
 }
 
 vector<Question*> DataBase::initQuestions(int questionsNo)
+{
+	string sqlStatement = "SELECT * FROM t_questions";
+	sqlite3_stmt *stmt;
+	vector<Question*> questionsVector;
+	if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
+		return questionsVector;//somthing went wrong
+	while (1)
+	{
+		int s;
+
+		s = sqlite3_step(stmt);//get first row
+		if (s == SQLITE_ROW)
+		{
+			int id = (char)sqlite3_column_text(stmt, 0) - '0';//not sure if its working
+			string question = (char*)sqlite3_column_text(stmt, 1);
+			string correctAns = (char*)sqlite3_column_text(stmt, 2);
+			string ans2 = (char*)sqlite3_column_text(stmt, 3);
+			string ans3 = (char*)sqlite3_column_text(stmt, 4);
+			string ans4 = (char*)sqlite3_column_text(stmt, 5);
+			Question* newQuestion = new Question(id, question, correctAns, ans2, ans3, ans4);//not sure if i sould free this memory later, also need to check if push_back shellow copy or not
+			questionsVector.push_back(newQuestion);
+		}
+		else if (s == SQLITE_DONE)
+		{
+			break;
+		}
+		else
+		{
+			return questionsVector;//somthing went wrong
+		}
+	}
+	int vSize = questionsVector.size();
+	srand(time(NULL));
+	while (vSize > questionsNo)//randomize to get random questions from data base
+	{
+		int randIndex = rand() % vSize;
+		questionsVector.erase(questionsVector.begin() + randIndex);
+		vSize--;
+	}
+	return questionsVector;
+}
+
+vector<Question*> DataBase::getBestScores()
 {
 	return vector<Question*>();
 }
 
 int DataBase::insertNewGame()
 {
-	return 0;
+	time_t now = time(0);
+	// convert now to string form
+	char* dt = ctime(&now);
+	string gameStatus = "0";//new game status equal zero
+	string sqlStatement = "INSERT INTO t_games(" + gameStatus + ", " + dt + ", " + "NULL" + ");";//not sure if it is working
+	char* errMessage = nullptr;
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
+	if (res != SQLITE_OK)
+	{
+		return this->_currGameId;//something went wrong a new game did not inserted
+	}
+	else
+	{
+		this->_currGameId++;//tracking/counting the amount of games in the database
+		return this->_currGameId;
+	}
 }
 
-bool DataBase::updateGameStatus(int status)
+bool DataBase::updateGameStatus(int id)
 {
-	return false;
+
+	time_t now = time(0);
+	// convert now to string form
+	char* dt = ctime(&now);
+	string gameStatus = "1";//new game status equal zero
+	string sqlStatement = "UPDATE t_games SET status = " + gameStatus + ", end_time = " + dt + "WHERE game_id = " + to_string(id) + ";";//not sure if it is working
+	char* errMessage = nullptr;
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
+	if (res != SQLITE_OK)
+		return false;//something went wrong
+	else
+		return true;
 }
 
 bool DataBase::addAnswerToPlayer(int gameId, string username, int questionId, string answer, bool isCorrect, int answerTime)
 {
-	return false;
+	string sqlStatement = "INSERT INTO t_players_answers(" + to_string(gameId) + ", " + username + ", " + to_string(questionId) + ", " + answer + ", " + to_string(isCorrect) + ", " + to_string(answerTime) + ");";//not sure if working
+	char* errMessage = nullptr;
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
+	if (res != SQLITE_OK)
+		return false;//something went wrong
+	else
+		return true;
 }

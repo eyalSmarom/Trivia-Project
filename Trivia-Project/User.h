@@ -19,7 +19,7 @@ public:
 	Game* getGame();
 	void setGame(Game*);
 	void clearRoom();
-	bool createRoom(int, string, int, int, int);
+	bool createRoom(int roomId, string roomName, int maxUsers, int questionNo, int questionTime);
 	bool joinRoom(Room*);
 	void leaveRoom();
 	int closeRoom();

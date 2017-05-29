@@ -18,6 +18,7 @@ public:
 	string getName();
 	User* getAdmin();
 	~Room();
+
 private:
 	vector<User*> _users;
 	User* _admin;

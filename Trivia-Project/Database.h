@@ -29,6 +29,7 @@ public:
 private:
 	sqlite3* _db;
 	string _filename;
+	int _currGameId;
 
 	static int callbackCount(void*, int, char**, char**);
 	static int callbackQuestions(void*, int, char**, char**);

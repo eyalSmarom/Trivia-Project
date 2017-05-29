@@ -6,6 +6,7 @@
 #include <thread>
 #include <map>
 #include <queue>
+#include <mutex>
 #include "User.h"
 #include "Room.h"
 #include "sqlite3.h"
@@ -46,12 +47,12 @@ class TriviaServer
 		bool handleCloseRoom(RecievedMessage* message);
 		bool handleJoinRoom(RecievedMessage* message);
 		bool handleLeaveRoom(RecievedMessage* message);
-		void handleGetUserInRoom(RecievedMessage* message);
+		void handleGetUsersInRoom(RecievedMessage* message);
 		void handleGetRooms(RecievedMessage* message);
+		void handleGetPersonalStatus(RecievedMessage* message);
 
 		void handleGetBestScores(RecievedMessage* message);
-		void addRecievedMessage();
-		void addRecievedMessage(RecievedMessage* message);
+		void handleRecievedMessage(RecievedMessage* message);
 		RecievedMessage* buildRecieveMessage(SOCKET socket, int num);
 
 		User* getUserByName(string name);
@@ -65,4 +66,5 @@ class TriviaServer
 		static int _roomIdSequence;
 		SOCKET _socket;
 		DataBase _db;
+		mutex mtxUsers;
 };
