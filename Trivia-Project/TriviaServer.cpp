@@ -27,7 +27,7 @@ void TriviaServer::bindAndListen()
 {
 	try
 	{
-		int port = 8860;
+		int port = 8820;
 		_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 		if (_socket == INVALID_SOCKET)
