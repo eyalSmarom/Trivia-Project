@@ -1,20 +1,22 @@
 #include "DataBase.h"
 #include "Question.h"
+#include <sys/stat.h>
 
-#define DB_NAME "TriviaDB.sqlite"
+#define DB_NAME "TriviaDb.sqlite"
 
 DataBase::DataBase() : _filename(DB_NAME), _currGameId(0)
 {
 	try
 	{
-		int file_exist = _access(this->_filename.c_str(), 0);
+		struct stat buffer;
+		bool file_exist = stat(_filename.c_str(), &buffer) == 0;
 		int res = sqlite3_open(this->_filename.c_str(), &this->_db);
 		if (res != SQLITE_OK)
 		{
 			this->_db = nullptr;
 			throw exception("Failed to open DB");
 		}
-		if (file_exist == 0)
+		if (!file_exist)
 		{
 			char* sqlStatement = "CREATE TABLE t_questions (question_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, question TEXT NOT NULL, correct_ans TEXT NOT NULL, ans2 TEXT NOT NULL, ans3 TEXT NOT NULL, ans4 TEXT NOT NULL);";
 			char* errMessage = nullptr;
