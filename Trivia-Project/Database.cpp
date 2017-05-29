@@ -58,7 +58,7 @@ DataBase::~DataBase()
 
 bool DataBase::isUserExists(string username)
 {
-	string sqlStatement = "SELECT username FROM t_users WHERE username = " + username + ";";
+	string sqlStatement = "SELECT username FROM t_users WHERE username = '" + username + "';";
 	sqlite3_stmt *stmt;
 	if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
 		return false;//somthing went wrong
@@ -85,7 +85,7 @@ bool DataBase::isUserExists(string username)
 
 bool DataBase::addNewUser(string username, string password, string email)
 {
-	string sqlStatement = "INSERT INTO t_users(" + username + ", " + password + ", " + email + ");";
+	string sqlStatement = "INSERT INTO t_users(username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "');";
 	char* errMessage = nullptr;
 	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK)
@@ -96,7 +96,7 @@ bool DataBase::addNewUser(string username, string password, string email)
 
 bool DataBase::isUserAndPassMatch(string username, string password)
 {
-	string sqlStatement = "SELECT * FROM t_users WHERE username = " + username + "AND Password = " + password + ";";
+	string sqlStatement = "SELECT * FROM t_users WHERE username = '" + username + "' AND Password = '" + password + "';";
 	sqlite3_stmt *stmt;
 	if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
 		return false;//somthing went wrong
@@ -175,7 +175,7 @@ int DataBase::insertNewGame()
 	// convert now to string form
 	char* dt = ctime(&now);
 	string gameStatus = "0";//new game status equal zero
-	string sqlStatement = "INSERT INTO t_games(" + gameStatus + ", " + dt + ", " + "NULL" + ");";//not sure if it is working
+	string sqlStatement = "INSERT INTO t_games(status, start_time, end_time) VALUES ('" + gameStatus + "', '" + dt + "', 'NULL');";//not sure if it is working
 	char* errMessage = nullptr;
 	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK)
@@ -196,7 +196,7 @@ bool DataBase::updateGameStatus(int id)
 	// convert now to string form
 	char* dt = ctime(&now);
 	string gameStatus = "1";//new game status equal zero
-	string sqlStatement = "UPDATE t_games SET status = " + gameStatus + ", end_time = " + dt + "WHERE game_id = " + to_string(id) + ";";//not sure if it is working
+	string sqlStatement = "UPDATE t_games SET status = '" + gameStatus + "', end_time = '" + dt + "' WHERE game_id = '" + to_string(id) + "';";//not sure if it is working
 	char* errMessage = nullptr;
 	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK)
@@ -207,7 +207,7 @@ bool DataBase::updateGameStatus(int id)
 
 bool DataBase::addAnswerToPlayer(int gameId, string username, int questionId, string answer, bool isCorrect, int answerTime)
 {
-	string sqlStatement = "INSERT INTO t_players_answers(" + to_string(gameId) + ", " + username + ", " + to_string(questionId) + ", " + answer + ", " + to_string(isCorrect) + ", " + to_string(answerTime) + ");";//not sure if working
+	string sqlStatement = "INSERT INTO t_players_answers(game_id, username, question_id, player_answer, is_correct, answer_time) VALUES('" + to_string(gameId) + "', '" + username + "', '" + to_string(questionId) + "', '" + answer + "', '" + to_string(isCorrect) + "', '" + to_string(answerTime) + "');";//not sure if working
 	char* errMessage = nullptr;
 	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK)

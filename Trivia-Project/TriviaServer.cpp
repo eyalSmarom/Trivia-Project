@@ -6,8 +6,7 @@ int TriviaServer::_roomIdSequence = 0;
 
 TriviaServer::TriviaServer()
 {
-	DataBase* tempDb = new DataBase();
-	_db = *tempDb;
+	_db = DataBase();
 }
 
 TriviaServer::~TriviaServer()
@@ -91,7 +90,6 @@ void TriviaServer::accept()
 		exit(1);
 	}
 }
-
 #pragma endregion
 
 void TriviaServer::clientHandler(SOCKET socket)
@@ -209,10 +207,6 @@ void TriviaServer::handleSignout(RecievedMessage* message)
 
 	if (user != nullptr) // if the user has been found.
 		_connectedUsers.erase(clientSocket);
-
-	handleCloseRoom(message);
-	handleLeaveRoom(message);
-	handleLeaveGame(message);
 }
 
 void TriviaServer::handleLeaveGame(RecievedMessage* message)
@@ -471,12 +465,20 @@ RecievedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
 			break;
 			
 		/* Requests that needs vector of parameters. */
-		case Sign_In_Request: case Sign_Up_Request: 
-			bytes = Helper::getIntPartFromSocket(socket, Two_Bytes_Int_Num);
-			while (bytes != 0)
+		case Sign_In_Request:
+			for(int i = 0; i < 2; i++)
 			{
-				parameters.push_back(string(Helper::getStringPartFromSocket(socket, bytes))); // name/password/email
 				bytes = Helper::getIntPartFromSocket(socket, Two_Bytes_Int_Num);
+				parameters.push_back(string(Helper::getStringPartFromSocket(socket, bytes))); // name/password/email
+			}
+			return new RecievedMessage(socket, num, parameters);
+			break;
+
+		case Sign_Up_Request:
+			for (int i = 0; i < 3; i++)
+			{
+				bytes = Helper::getIntPartFromSocket(socket, Two_Bytes_Int_Num);
+				parameters.push_back(string(Helper::getStringPartFromSocket(socket, bytes))); // name/password/email
 			}
 			return new RecievedMessage(socket, num, parameters);
 			break;
