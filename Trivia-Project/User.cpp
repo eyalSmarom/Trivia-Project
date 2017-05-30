@@ -83,11 +83,10 @@ int User::closeRoom()
 {
 	if (this->_currRoom == nullptr)
 		return -1;
-	if (!this->_currRoom->getAdmin()->getUsername().compare(this->_username))
+	if (this->_currRoom->getAdmin()->getUsername().compare(this->_username))
 		return this->_currRoom->closeRoom(this);
 	delete this->_currRoom;
 	this->_currRoom = nullptr;
-
 }
 
 bool User::leaveGame()
@@ -100,5 +99,4 @@ bool User::leaveGame()
 		}
 		return false;
 	}
-
 }

@@ -78,10 +78,7 @@ User * Room::getAdmin()
 
 Room::~Room()
 {
-	for (vector<User*>::iterator it = _users.begin(); it != _users.end(); it++)
-	{
-		delete (*it);
-	}
+	
 }
 
 void Room::sendMessage(string message)

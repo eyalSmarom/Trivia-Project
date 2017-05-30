@@ -62,7 +62,7 @@ bool DataBase::isUserExists(string username)
 {
 	string sqlStatement = "SELECT username FROM t_users WHERE username = '" + username + "';";
 	sqlite3_stmt *stmt;
-	if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
+	if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), -1, &stmt, NULL) != SQLITE_OK)
 		return false;//somthing went wrong
 	while (1)
 	{
@@ -193,7 +193,6 @@ int DataBase::insertNewGame()
 
 bool DataBase::updateGameStatus(int id)
 {
-
 	time_t now = time(0);
 	// convert now to string form
 	char* dt = ctime(&now);

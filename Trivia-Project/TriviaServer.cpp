@@ -6,7 +6,8 @@ int TriviaServer::_roomIdSequence = 0;
 
 TriviaServer::TriviaServer()
 {
-	_db = DataBase();
+	DataBase* tempDB = new DataBase();
+	_db = *tempDB;
 }
 
 TriviaServer::~TriviaServer()
@@ -257,6 +258,8 @@ bool TriviaServer::handleCreateRoom(RecievedMessage* message)
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
 	vector<string> values = message->getValues();
+	string Message = to_string(Create_Room_Response);
+	bool ans = false;
 
 	if (user != nullptr)
 	{
@@ -264,27 +267,40 @@ bool TriviaServer::handleCreateRoom(RecievedMessage* message)
 		if (user->createRoom(_roomIdSequence, values[0], stoi(values[1], 0, 10), stoi(values[2], 0, 10), stoi(values[3], 0, 10)))
 		{
 			_roomsList.insert(pair<int, Room*>(_roomIdSequence, user->getRoom()));
-			return true;
+			Message += to_string(Create_Room_Success);
+			ans = true;
 		}
+		else
+			Message += to_string(Create_Room_Fail);
 	}
-	return false;
+	else
+		Message += to_string(Create_Room_Fail);
+	Helper::sendData(clientSocket, Message);
+	return ans;
 }
 
 bool TriviaServer::handleCloseRoom(RecievedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
+	string Message = to_string(Close_Room_Response);
+	bool ans = false;
+	int roomId;
 
 	if (user != nullptr)
 	{
 		if (user->getUsername() == user->getRoom()->getAdmin()->getUsername())
 		{
+			roomId = user->getRoom()->getId();
 			user->closeRoom();
-			return true;
+			_roomsList.erase(roomId);
+			ans = true;
 		}
 		else
-			return false;
+			ans = false;
 	}
+	Helper::sendData(clientSocket, Message);
+	return ans;
 }
 
 bool TriviaServer::handleJoinRoom(RecievedMessage * message)
@@ -349,13 +365,15 @@ void TriviaServer::handleGetRooms(RecievedMessage * message)
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
 	string Message = to_string(All_Rooms_List_Request);
-	Message += to_string(_roomsList.size());
+	Message += Helper::getPaddedNumber(_roomsList.size(), 4);
+	Room* temp;
 
-	for (int i = 0; i < _roomsList.size(); i++)
+	for (map<int, Room*>::iterator it = _roomsList.begin(); it != _roomsList.end(); it++)
 	{
-		Message += to_string(_roomsList[i]->getId());
-		Message += to_string(_roomsList[i]->getName().size());
-		Message += _roomsList[i]->getName();
+		temp = it->second;
+		Message += Helper::getPaddedNumber(temp->getId(), 4);
+		Message += Helper::getPaddedNumber(temp->getName().size(), 2);
+		Message += temp->getName();
 	}
 
 	Helper::sendData(clientSocket, Message);
