@@ -35,6 +35,37 @@ DataBase::DataBase() : _filename(DB_NAME), _currGameId(0)
 			res = sqlite3_exec(this->_db, sqlStatement, nullptr, nullptr, &errMessage);
 			if (res != SQLITE_OK)
 				throw exception("Database Problem");
+
+			// Inserting the questions
+			sqlStatement = "INSERT INTO t_questions (question, correct_ans, ans2, ans3, ans4) VALUES ('When did Albert Einstein win a noble prize?', '1921', '1922', '1928', '1926');";
+			res = sqlite3_exec(_db, sqlStatement, nullptr, nullptr, &errMessage);
+			if (res != SQLITE_OK)
+				throw exception("Question Insert Problem");
+
+			sqlStatement = "INSERT INTO t_questions (question, correct_ans, ans2, ans3, ans4) VALUES ('When was Albert Einstein Born?', '14.3.1879', '4.6.1878', '3.9.1885', '3.10.1877');";
+			res = sqlite3_exec(_db, sqlStatement, nullptr, nullptr, &errMessage);
+			if (res != SQLITE_OK)
+				throw exception("Question Insert Problem");
+
+			sqlStatement = "INSERT INTO t_questions (question, correct_ans, ans2, ans3, ans4) VALUES ('Where was Albert Einstein born?', 'Ulm', 'Hamburg', 'Dresden', 'Berlin');";
+			res = sqlite3_exec(_db, sqlStatement, nullptr, nullptr, &errMessage);
+			if (res != SQLITE_OK)
+				throw exception("Question Insert Problem");
+
+			sqlStatement = "INSERT INTO t_questions (question, correct_ans, ans2, ans3, ans4) VALUES ('When did Albert Einstein formulate his special theory of relativity', '1905', '1903', '1900', '1904');";
+			res = sqlite3_exec(_db, sqlStatement, nullptr, nullptr, &errMessage);
+			if (res != SQLITE_OK)
+				throw exception("Question Insert Problem");
+
+			sqlStatement = "INSERT INTO t_questions (question, correct_ans, ans2, ans3, ans4) VALUES ('How Many Hearts does an Occtupus have?', '1', '2', '3', '4');";
+			res = sqlite3_exec(_db, sqlStatement, nullptr, nullptr, &errMessage);
+			if (res != SQLITE_OK)
+				throw exception("Question Insert Problem");
+
+			sqlStatement = "INSERT INTO t_questions (question, correct_ans, ans2, ans3, ans4) VALUES ('What is Eyal's Shield in Math?', '95', '90', '85', '96');";
+			res = sqlite3_exec(_db, sqlStatement, nullptr, nullptr, &errMessage);
+			if (res != SQLITE_OK)
+				throw exception("Question Insert Problem");
 		}
 	}
 	catch (exception& e)
@@ -50,6 +81,9 @@ DataBase::DataBase() : _filename(DB_NAME), _currGameId(0)
 
 DataBase::DataBase(DataBase & other)
 {
+	_currGameId = other._currGameId;
+	_filename = string(other._filename);
+	_db = other._db;
 }
 
 DataBase::~DataBase()
@@ -125,6 +159,7 @@ bool DataBase::isUserAndPassMatch(string username, string password)
 
 vector<Question*> DataBase::initQuestions(int questionsNo)
 {
+	int i = 1;
 	string sqlStatement = "SELECT * FROM t_questions";
 	sqlite3_stmt *stmt;
 	vector<Question*> questionsVector;
@@ -137,14 +172,14 @@ vector<Question*> DataBase::initQuestions(int questionsNo)
 		s = sqlite3_step(stmt);//get first row
 		if (s == SQLITE_ROW)
 		{
-			int id = (char)sqlite3_column_text(stmt, 0) - '0';//not sure if its working
 			string question = (char*)sqlite3_column_text(stmt, 1);
 			string correctAns = (char*)sqlite3_column_text(stmt, 2);
 			string ans2 = (char*)sqlite3_column_text(stmt, 3);
 			string ans3 = (char*)sqlite3_column_text(stmt, 4);
 			string ans4 = (char*)sqlite3_column_text(stmt, 5);
-			Question* newQuestion = new Question(id, question, correctAns, ans2, ans3, ans4);//not sure if i sould free this memory later, also need to check if push_back shellow copy or not
+			Question* newQuestion = new Question(i, question, correctAns, ans2, ans3, ans4);//not sure if i sould free this memory later, also need to check if push_back shellow copy or not
 			questionsVector.push_back(newQuestion);
+			i++;
 		}
 		else if (s == SQLITE_DONE)
 		{

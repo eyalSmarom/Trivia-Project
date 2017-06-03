@@ -3,6 +3,7 @@
 #include "Helper.h"
 #include "Database.h"
 #include <map>
+#include <mutex>
 
 class Room;
 class User;
@@ -12,6 +13,7 @@ class Game
 {
 public:
 	Game(const vector<User*>& players, int questionNo, DataBase& db);
+	Game(Game& other);
 	~Game();
 	void sendFirstQuestion();
 	void handleFinishGame();
@@ -21,6 +23,7 @@ public:
 	int getID();
 
 private:
+	mutex mtxResult;
 	vector<Question*> _questions;
 	vector<User*> _players;
 	int _questionNo;

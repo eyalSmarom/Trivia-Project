@@ -46,7 +46,10 @@ Game* User::getGame()
 void User::setGame(Game* gm)
 {
 	this->_currRoom = nullptr;
-	this->_currGame = new Game(*gm);
+	if (gm != nullptr)
+		this->_currGame = new Game(*gm);
+	else
+		this->_currGame = nullptr;
 }
 
 void User::clearRoom()

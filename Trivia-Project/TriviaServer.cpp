@@ -104,7 +104,7 @@ void TriviaServer::clientHandler(SOCKET socket)
 			handleRecievedMessage(buildRecieveMessage(socket, code));
 			code = Helper::getMessageTypeCode(socket);
 		}
-		catch(...) {  }
+		catch (exception& e) { cout << e.what() << endl; }
 	}
 }
 
@@ -116,7 +116,7 @@ void TriviaServer::safeDeleteUser(RecievedMessage* message)
 		handleSignout(message);
 		closesocket(clientSocket);
 	}
-	catch(...) { }
+	catch (exception& e) { cout << e.what() << endl; }
 }
 
 #pragma region Handles
@@ -461,8 +461,9 @@ void TriviaServer::handleRecievedMessage(RecievedMessage* message)
 			break;
 		}
 	}
-	catch (...)
+	catch (exception& e)
 	{
+		cout << e.what() << endl;
 		safeDeleteUser(message);
 	}
 }
@@ -478,7 +479,7 @@ RecievedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
 		//Requests that does not need any vector of parameters.
 		case Sign_Out_Request: case All_Rooms_List_Request: case Leave_Room_Request:
 		case Close_Room_Request: case Leave_Game_Request: case Best_Scores_Request:
-		case Personal_State_Request: case Leave_App_Request:
+		case Personal_State_Request: case Leave_App_Request: case Start_Game_Request:
 			return new RecievedMessage(socket, num);
 			break;
 			
