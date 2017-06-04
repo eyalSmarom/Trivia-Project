@@ -4,9 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
+using FirstFloor.ModernUI.Windows;
+using System.Windows.Controls;
+using FirstFloor.ModernUI.Windows.Navigation;
+using FirstFloor.ModernUI.Windows.Controls;
 
 namespace Trivia_Client
 {
+
     public static class Session
     {
         public static User CurrentUser = null;
@@ -15,31 +20,11 @@ namespace Trivia_Client
 
     public class User
     {
-        private string Username
-        {
-            get
-            {
-                return this.Username;
-            }
-            set
-            {
-                if (value is string)
-                    this.Username = value;
-            }
-        }
-        private string Password
-        {
-            get
-            {
-                return this.Password;
-            }
-            set
-            {
-                if (value is string)
-                    this.Password = value;
-            }
-        }
+        private string Username;
+        private string Password;
         private Socket ClientSocket;
+        private Room CurrRoom;
+        private Game CurrGame;
         
 
         public User()
@@ -65,6 +50,37 @@ namespace Trivia_Client
             this.ClientSocket = ClientSocket;
         }
 
+        public void SetDetails(string Username, string Password)
+        {
+            this.Username = Username;
+            this.Password = Password;
+        }
+
+        public Socket GetSocket()
+        {
+            return ClientSocket;
+        }
+
+        public void SetGame(Game ToChange)
+        {
+            CurrGame = ToChange;
+        }
+
+        public Game GetGame()
+        {
+            return CurrGame;
+        }
+
+        public void SetRoom(Room ToChange)
+        {
+            CurrRoom = ToChange;
+        }
+
+        public Room GetRoom()
+        {
+            return CurrRoom;
+        }
+
         public string SendBackToServer(ClientRecievedMessage Message)
         {
             byte[] ToSend = Encoding.ASCII.GetBytes(Message._StringedMessage);
@@ -76,6 +92,41 @@ namespace Trivia_Client
                 return Encoding.ASCII.GetString(ToRecieve);
             }
             catch(Exception e) { return null; }
+        }
+    }
+
+    public class Room
+    {
+        int MaxUsers;
+        int NumberOfUsers;
+        int Id;
+        List<string> Users;
+
+        public Room(int NumberOfUsers, int MaxUsers)
+        {
+            this.NumberOfUsers = NumberOfUsers;
+            this.MaxUsers = MaxUsers;
+        }
+
+        public Room(int NumberOfUsers)
+        {
+            this.NumberOfUsers = NumberOfUsers;
+        }
+    }
+
+    public class Game
+    {
+        int NumberOfUsers;
+        List<string> Users;
+        int QuestionNumber;
+        int QuestionTime;
+
+        public Game(int NumberOfUsers, int QuestionNumber, int QuestionTime, List<string> Users)
+        {
+            this.NumberOfUsers = NumberOfUsers;
+            this.QuestionNumber = QuestionNumber;
+            this.QuestionTime = QuestionTime;
+            this.Users = new List<string>(Users);
         }
     }
 

@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Trivia_Client.Pages.CreateRoom"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Style="{StaticResource ContentRoot}">
+        <ScrollViewer Margin="0,0,0,-65">
+            <StackPanel MinWidth="200">
+                <TextBlock Text="Create A Room" Style="{StaticResource Heading2}" TextAlignment="Center"/>
+                <TextBlock Text="Create the room you want to play TRIVIAAA!!" TextAlignment="Center" />
+                <Grid Height="219">
+                    <Label Content="Room Name" Margin="0,37,199,162"/>
+                    <TextBox x:Name="RoomName" Margin="167,32,10,162"></TextBox>
+                    <Label Content="Number Of Players" Margin="0,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.49,0.5" HorizontalAlignment="Left" Width="104"/>
+                    <TextBox x:Name="PlayersNumber" Margin="167,72,10,121"></TextBox>
+                    <Label Content="Number Of Questions" HorizontalAlignment="Left" Margin="0,116,0,80"></Label>
+                    <TextBox x:Name="QuestionsNumber" Margin="167,113,10,80"></TextBox>
+                    <Label Content="Question Answer Time" HorizontalAlignment="Left" Margin="0,157,0,41"></Label>
+                    <TextBox x:Name="QuestionTime" Margin="167,153,10,40" ></TextBox>
+                    <Label x:Name="ErrorMessage" Content="" Margin="325,220,-177,-50"></Label>
+                    <Button Content="Create" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="325,243,0,-50" Click="Button_Click"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

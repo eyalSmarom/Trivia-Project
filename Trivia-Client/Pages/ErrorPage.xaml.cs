@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Trivia_Client.Pages
 {
     /// <summary>
-    /// Interaction logic for Connect.xaml
+    /// Interaction logic for ErrorPage.xaml
     /// </summary>
-    public partial class Connect : UserControl
+    public partial class ErrorPage : UserControl
     {
-        public Connect()
+        public ErrorPage()
         {
             InitializeComponent();
         }
