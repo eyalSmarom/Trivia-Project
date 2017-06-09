@@ -33,27 +33,27 @@ class TriviaServer
 		void bindAndListen();
 		void accept();
 		void clientHandler(SOCKET socket);
-		void safeDeleteUser(RecievedMessage* message);
+		void safeDeleteUser(ReceivedMessage* message);
 
-		User* handleSignIn(RecievedMessage* message);
-		bool handleSignUp(RecievedMessage* message);
-		void handleSignout(RecievedMessage* message);
+		User* handleSignIn(ReceivedMessage* message);
+		bool handleSignUp(ReceivedMessage* message);
+		void handleSignout(ReceivedMessage* message);
 
-		void handleLeaveGame(RecievedMessage* message);
-		void handleStartGame(RecievedMessage* message);
-		void handlePlayerAnswer(RecievedMessage* message);
+		void handleLeaveGame(ReceivedMessage* message);
+		void handleStartGame(ReceivedMessage* message);
+		void handlePlayerAnswer(ReceivedMessage* message);
 
-		bool handleCreateRoom(RecievedMessage* message);
-		bool handleCloseRoom(RecievedMessage* message);
-		bool handleJoinRoom(RecievedMessage* message);
-		bool handleLeaveRoom(RecievedMessage* message);
-		void handleGetUsersInRoom(RecievedMessage* message);
-		void handleGetRooms(RecievedMessage* message);
-		void handleGetPersonalStatus(RecievedMessage* message);
+		bool handleCreateRoom(ReceivedMessage* message);
+		bool handleCloseRoom(ReceivedMessage* message);
+		bool handleJoinRoom(ReceivedMessage* message);
+		bool handleLeaveRoom(ReceivedMessage* message);
+		void handleGetUsersInRoom(ReceivedMessage* message);
+		void handleGetRooms(ReceivedMessage* message);
+		void handleGetPersonalStatus(ReceivedMessage* message);
 
-		void handleGetBestScores(RecievedMessage* message);
-		void handleRecievedMessage(RecievedMessage* message);
-		RecievedMessage* buildRecieveMessage(SOCKET socket, int num);
+		void handleGetBestScores(ReceivedMessage* message);
+		void handleReceivedMessage(ReceivedMessage* message);
+		ReceivedMessage* buildRecieveMessage(SOCKET socket, int num);
 
 		User* getUserByName(string name);
 		User* getUserBySocket(SOCKET socket);
@@ -62,7 +62,7 @@ class TriviaServer
 		//Variables
 		map<SOCKET, User*> _connectedUsers;
 		map<int, Room*> _roomsList;
-		queue<RecievedMessage*> _queRcvMessages;
+		queue<ReceivedMessage*> _queRcvMessages;
 		static int _roomIdSequence;
 		SOCKET _socket;
 		DataBase _db;

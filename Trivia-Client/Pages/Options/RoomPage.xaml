@@ -9,8 +9,17 @@
     <Grid Style="{StaticResource ContentRoot}">
         <ScrollViewer>
             <StackPanel MinWidth="200">
-                <TextBlock Text="BASIC PAGE" Style="{StaticResource Heading2}" />
-                <TextBlock Text="Content goes here" />
+                <TextBlock x:Name="RoomName" Text="" TextAlignment="Center" Style="{StaticResource Heading2}" />
+                <TextBlock Text="Ready For Some Trivia??" TextAlignment="Center" />
+                <Grid Height="220" >
+                    <TextBlock x:Name="PlayersNum" TextAlignment="Center" Text="" Width="251" Margin="0,17,0,181"/>
+                    <TextBlock x:Name="QuestionNum" TextAlignment="Center" Text="" Margin="0,44,0,154" Width="251"/>
+                    <TextBlock x:Name="QuestionTime" TextAlignment="Center" Text="" Margin="0,71,0,127" Width="251"/>
+                    <ListView x:Name="Players" Height="100" Margin="20,76,20,0">
+                        
+                    </ListView>
+                    <Button x:Name="StartGame" Content="Start Game" VerticalAlignment="Top" Margin="75,198,76,-4"/>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
     </Grid>

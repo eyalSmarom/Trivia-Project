@@ -35,7 +35,7 @@ namespace Trivia_Client.Pages
 
         private bool Connection()
         {
-            if (Session.CurrentUser != null && Session.CurrentUser.GetSocket() != null)
+            if ((Session.CurrentUser != null && Session.CurrentUser.GetSocket() != null) || Session.JustSignedUp)
                 return true;
         
             Socket ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -62,6 +62,12 @@ namespace Trivia_Client.Pages
             var Window = Application.Current.MainWindow as ModernWindow;
 
             Window.MenuLinkGroups.Clear();
+
+            Window.TitleLinks.Add(new FirstFloor.ModernUI.Presentation.Link()
+            {
+                DisplayName = "Settings",
+                Source = new Uri("./Pages/SettingsPage.xaml", UriKind.Relative)
+            });
 
             Window.MenuLinkGroups.Add(new FirstFloor.ModernUI.Presentation.LinkGroup()
             {

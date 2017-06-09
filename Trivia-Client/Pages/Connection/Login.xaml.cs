@@ -40,7 +40,7 @@ namespace Trivia_Client.Pages
             Values[0] = _Username = Username.Text;
             Values[1] = _Password = Password.Password;
 
-            ClientRecievedMessage Message = new ClientRecievedMessage(ClientCodes.SignIn, Values);
+            ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.SignIn, Values);
             if(HandleSignIn(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty)))
             {
                 frame.Source = new Uri("./Pages/Home.xaml", UriKind.Relative);

@@ -4,17 +4,17 @@
 #include "User.h"
 
 using namespace std;
-class RecievedMessage
+class ReceivedMessage
 {
 public:
-	RecievedMessage(SOCKET, int);
-	RecievedMessage(SOCKET, int, vector<string>);
+	ReceivedMessage(SOCKET, int);
+	ReceivedMessage(SOCKET, int, vector<string>);
 	SOCKET getSock();
 	User* getUser();
 	void setUser(User*);
 	int GetMessageCode();
 	vector<string>& getValues();
-	~RecievedMessage();
+	~ReceivedMessage();
 
 private:
 	SOCKET _sock;

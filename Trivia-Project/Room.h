@@ -14,6 +14,7 @@ public:
 	vector<User*>& getUsers();
 	string getUsersListMessage();
 	int getQuestionNo();
+	int getQuestionTime();
 	int getId();
 	string getName();
 	User* getAdmin();

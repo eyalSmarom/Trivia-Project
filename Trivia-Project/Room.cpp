@@ -46,11 +46,11 @@ vector<User*>& Room::getUsers()
 
 string Room::getUsersListMessage()
 {
-	string message = "108";
+	string message = "";
 	message += to_string(_users.size());
 	for (vector<User*>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
 	{
-		message += (*it)->getUsername().size();
+		message += Helper::getPaddedNumber((*it)->getUsername().size(), 2);
 		message += (*it)->getUsername();
 	}
 	return message;
@@ -94,4 +94,9 @@ void Room::sendMessage(User* excludeUser, string message)
 			continue;
 		(*it)->send(message);
 	}
+}
+
+int Room::getQuestionTime()
+{
+	return _questionTime;
 }

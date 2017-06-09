@@ -101,14 +101,14 @@ void TriviaServer::clientHandler(SOCKET socket)
 	{
 		try
 		{
-			handleRecievedMessage(buildRecieveMessage(socket, code));
+			handleReceivedMessage(buildRecieveMessage(socket, code));
 			code = Helper::getMessageTypeCode(socket);
 		}
-		catch (exception& e) { cout << e.what() << endl; }
+		catch (exception& e) { cout << e.what() << endl; safeDeleteUser(new ReceivedMessage(socket, 0)); break; }
 	}
 }
 
-void TriviaServer::safeDeleteUser(RecievedMessage* message)
+void TriviaServer::safeDeleteUser(ReceivedMessage* message)
 {
 	try
 	{
@@ -116,13 +116,13 @@ void TriviaServer::safeDeleteUser(RecievedMessage* message)
 		handleSignout(message);
 		closesocket(clientSocket);
 	}
-	catch (exception& e) { cout << e.what() << endl; }
+	catch (exception& e) { cout << e.what() << endl;  }
 }
 
 #pragma region Handles
 
 
-User* TriviaServer::handleSignIn(RecievedMessage* message)
+User* TriviaServer::handleSignIn(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 
@@ -155,7 +155,7 @@ User* TriviaServer::handleSignIn(RecievedMessage* message)
 	return user;
 }
 
-bool TriviaServer::handleSignUp(RecievedMessage* message)
+bool TriviaServer::handleSignUp(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 	string username = message->getValues()[0];
@@ -199,7 +199,7 @@ bool TriviaServer::handleSignUp(RecievedMessage* message)
 	}
 }
 
-void TriviaServer::handleSignout(RecievedMessage* message)
+void TriviaServer::handleSignout(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock(); // getting the client's socket
 	User* user;
@@ -210,7 +210,7 @@ void TriviaServer::handleSignout(RecievedMessage* message)
 		_connectedUsers.erase(clientSocket);
 }
 
-void TriviaServer::handleLeaveGame(RecievedMessage* message)
+void TriviaServer::handleLeaveGame(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 	
@@ -221,7 +221,7 @@ void TriviaServer::handleLeaveGame(RecievedMessage* message)
 			user->setGame(nullptr);
 }
 
-void TriviaServer::handleStartGame(RecievedMessage* message)
+void TriviaServer::handleStartGame(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -236,7 +236,7 @@ void TriviaServer::handleStartGame(RecievedMessage* message)
 	catch (...) {}
 }
 
-void TriviaServer::handlePlayerAnswer(RecievedMessage* message)
+void TriviaServer::handlePlayerAnswer(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -253,7 +253,7 @@ void TriviaServer::handlePlayerAnswer(RecievedMessage* message)
 	}
 }
 
-bool TriviaServer::handleCreateRoom(RecievedMessage* message)
+bool TriviaServer::handleCreateRoom(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -268,6 +268,7 @@ bool TriviaServer::handleCreateRoom(RecievedMessage* message)
 		{
 			_roomsList.insert(pair<int, Room*>(_roomIdSequence, user->getRoom()));
 			Message += to_string(Create_Room_Success);
+			Message += Helper::getPaddedNumber(user->getRoom()->getId(), 4);
 			ans = true;
 		}
 		else
@@ -279,7 +280,7 @@ bool TriviaServer::handleCreateRoom(RecievedMessage* message)
 	return ans;
 }
 
-bool TriviaServer::handleCloseRoom(RecievedMessage* message)
+bool TriviaServer::handleCloseRoom(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -303,7 +304,7 @@ bool TriviaServer::handleCloseRoom(RecievedMessage* message)
 	return ans;
 }
 
-bool TriviaServer::handleJoinRoom(RecievedMessage * message)
+bool TriviaServer::handleJoinRoom(ReceivedMessage * message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -318,6 +319,8 @@ bool TriviaServer::handleJoinRoom(RecievedMessage * message)
 			return false;
 		}
 		user->joinRoom(room);
+		Message += Helper::getPaddedNumber(room->getQuestionNo(), 2);
+		Message += Helper::getPaddedNumber(room->getQuestionTime(), 2);
 		Message += to_string(Join_Room_Success);
 	}
 
@@ -325,7 +328,7 @@ bool TriviaServer::handleJoinRoom(RecievedMessage * message)
 	return false;
 }
 
-bool TriviaServer::handleLeaveRoom(RecievedMessage * message)
+bool TriviaServer::handleLeaveRoom(ReceivedMessage * message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -342,7 +345,7 @@ bool TriviaServer::handleLeaveRoom(RecievedMessage * message)
 	return false;
 }
 
-void TriviaServer::handleGetUsersInRoom(RecievedMessage* message)
+void TriviaServer::handleGetUsersInRoom(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -360,7 +363,7 @@ void TriviaServer::handleGetUsersInRoom(RecievedMessage* message)
 	Helper::sendData(clientSocket, Message);
 }
 
-void TriviaServer::handleGetRooms(RecievedMessage * message)
+void TriviaServer::handleGetRooms(ReceivedMessage * message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -379,12 +382,12 @@ void TriviaServer::handleGetRooms(RecievedMessage * message)
 	Helper::sendData(clientSocket, Message);
 }
 
-void TriviaServer::handleGetPersonalStatus(RecievedMessage * message)
+void TriviaServer::handleGetPersonalStatus(ReceivedMessage * message)
 {
 	/*To Do ...*/
 }
 
-void TriviaServer::handleGetBestScores(RecievedMessage * message)
+void TriviaServer::handleGetBestScores(ReceivedMessage * message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
@@ -392,7 +395,7 @@ void TriviaServer::handleGetBestScores(RecievedMessage * message)
 	// ToDo...
 }
 
-void TriviaServer::handleRecievedMessage(RecievedMessage* message)
+void TriviaServer::handleReceivedMessage(ReceivedMessage* message)
 {
 	int messageCode = message->GetMessageCode();
 
@@ -469,7 +472,7 @@ void TriviaServer::handleRecievedMessage(RecievedMessage* message)
 }
 #pragma endregion
 
-RecievedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
+ReceivedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
 {
 	int bytes;
 	vector<string> parameters;
@@ -480,7 +483,7 @@ RecievedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
 		case Sign_Out_Request: case All_Rooms_List_Request: case Leave_Room_Request:
 		case Close_Room_Request: case Leave_Game_Request: case Best_Scores_Request:
 		case Personal_State_Request: case Leave_App_Request: case Start_Game_Request:
-			return new RecievedMessage(socket, num);
+			return new ReceivedMessage(socket, num);
 			break;
 			
 		/* Requests that needs vector of parameters. */
@@ -490,7 +493,7 @@ RecievedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
 				bytes = Helper::getIntPartFromSocket(socket, Two_Bytes_Int_Num);
 				parameters.push_back(string(Helper::getStringPartFromSocket(socket, bytes))); // name/password/email
 			}
-			return new RecievedMessage(socket, num, parameters);
+			return new ReceivedMessage(socket, num, parameters);
 			break;
 
 		case Sign_Up_Request:
@@ -499,13 +502,13 @@ RecievedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
 				bytes = Helper::getIntPartFromSocket(socket, Two_Bytes_Int_Num);
 				parameters.push_back(string(Helper::getStringPartFromSocket(socket, bytes))); // name/password/email
 			}
-			return new RecievedMessage(socket, num, parameters);
+			return new ReceivedMessage(socket, num, parameters);
 			break;
 
 		case All_Room_Users_Request: case Join_Room_Request:
 			bytes = 4;
 			parameters.push_back(string(Helper::getStringPartFromSocket(socket, bytes))); // roomId
-			return new RecievedMessage(socket, num, parameters);
+			return new ReceivedMessage(socket, num, parameters);
 			break;
 
 		case Create_Room_Request:
@@ -514,13 +517,13 @@ RecievedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
 			parameters.push_back(string(Helper::getStringPartFromSocket(socket, One_Byte_Int_Num))); // Number of Players
 			parameters.push_back(string(Helper::getStringPartFromSocket(socket, Two_Bytes_Int_Num))); // Number of Questions
 			parameters.push_back(string(Helper::getStringPartFromSocket(socket, Two_Bytes_Int_Num))); // Answer time
-			return new RecievedMessage(socket, num, parameters);
+			return new ReceivedMessage(socket, num, parameters);
 			break;
 
 		case Client_Answer:
 			parameters.push_back(string(Helper::getStringPartFromSocket(socket, One_Byte_Int_Num))); // Answer Number
 			parameters.push_back(string(Helper::getStringPartFromSocket(socket, Two_Bytes_Int_Num))); // Answer Time
-			return new RecievedMessage(socket, num, parameters);
+			return new ReceivedMessage(socket, num, parameters);
 			break;
 			
 		default:

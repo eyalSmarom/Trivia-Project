@@ -16,8 +16,9 @@ namespace Trivia_Client
     {
         public static User CurrentUser = null;
         public static bool Logged = false;
+        public static bool JustSignedUp = false;
     }
-
+    #region User Room Game
     public class User
     {
         private string Username;
@@ -81,7 +82,7 @@ namespace Trivia_Client
             return CurrRoom;
         }
 
-        public string SendBackToServer(ClientRecievedMessage Message)
+        public string SendBackToServer(ClientReceivedMessage Message)
         {
             byte[] ToSend = Encoding.ASCII.GetBytes(Message._StringedMessage);
             byte[] ToRecieve = new byte[1024];
@@ -97,20 +98,26 @@ namespace Trivia_Client
 
     public class Room
     {
-        int MaxUsers;
-        int NumberOfUsers;
-        int Id;
-        List<string> Users;
+        public int MaxUsers { get; set; }
+        public int QuestionNumber { get; set; }
+        public int QuestionTime { get; set; }
+        public List<string> Users { get; private set; }
+        public bool IsAdmin { get; set; }
+        public int Id { get; set; }
+        public string RoomName { get; set; }
 
-        public Room(int NumberOfUsers, int MaxUsers)
+        public Room(int QuestionNumber, int MaxUsers, int QuestionTime, bool IsAdmin, string RoomName)
         {
-            this.NumberOfUsers = NumberOfUsers;
+            this.QuestionNumber = QuestionNumber;
+            this.QuestionTime = QuestionTime;
             this.MaxUsers = MaxUsers;
+            this.IsAdmin = IsAdmin;
+            this.RoomName = RoomName;
         }
 
-        public Room(int NumberOfUsers)
+        public void SetUsers(List<string> other)
         {
-            this.NumberOfUsers = NumberOfUsers;
+            this.Users = new List<string>(other);
         }
     }
 
@@ -129,20 +136,23 @@ namespace Trivia_Client
             this.Users = new List<string>(Users);
         }
     }
+    #endregion
 
-    public class ClientRecievedMessage
+    #region ReceivedMessages
+    public class ClientReceivedMessage
     {
         public string[] _Values { get; }
         public string _MessageCode { get; }
         public string _StringedMessage { get; set; }
 
-        public ClientRecievedMessage(string Code)
+        public ClientReceivedMessage(string Code)
         {
             _MessageCode = Code;
             _Values = new string[0];
+            _StringedMessage = _MessageCode;
         }
 
-        public ClientRecievedMessage(string Code, string[] Values)
+        public ClientReceivedMessage(string Code, string[] Values)
         {
             _MessageCode = Code;
             _Values = new string[Values.Length];
@@ -226,7 +236,137 @@ namespace Trivia_Client
         }
     }
 
+    public class ServerReceivedMessage
+    {
+        public string[] _Values { get; private set; }
+        public string _MessageCode { get; }
+        public string _StringedMessage { get; set; }
 
+        public ServerReceivedMessage(string Code)
+        {
+            _MessageCode = _StringedMessage = Code;
+            _Values = new string[0];
+        }
+
+        public ServerReceivedMessage(string Code, string StringedMessage)
+        {
+            _StringedMessage = StringedMessage;
+
+            switch(Code)
+            {
+                case ServerCodes.AllRooms:
+                    ParameteredAllRooms();
+                    break;
+
+                case ServerCodes.AllRoomUsers:
+                    ParameteredAllRoomUsers();
+                    break;
+
+                case ServerCodes.JoinRoom:
+                    ParameteredJoinRoom();
+                    break;
+
+                case ServerCodes.SendQuestions:
+                    ParameteredSendQuestion();
+                    break;
+
+                case ServerCodes.TrueFalse:
+                    ParameteredTrueFalse();
+                    break;
+
+                case ServerCodes.EndGame:
+                    ParameteredEndGame();
+                    break;
+
+                case ServerCodes.BestScores:
+                    ParameteredBestScores();
+                    break;
+
+                case ServerCodes.PersonalState:
+                    ParameteredPersonalState();
+                    break;
+            }
+        }
+
+        public void ParameteredAllRooms()
+        {
+            string temp = _StringedMessage;
+            int RoomNameSize;
+            temp = temp.Substring(3);
+
+            _Values = new string[1024]; // max rooms
+
+            _Values[0] = temp.Substring(0, 4); // Number of Rooms
+            temp = temp.Substring(4);
+
+            for(int i = 1; i <= Convert.ToInt16(_Values[0]); i += 2)
+            {
+                _Values[i] = temp.Substring(0, 4); // Id
+                temp = temp.Substring(4); // skip[ing the Id
+
+                RoomNameSize = Convert.ToInt16(temp.Substring(0, 2));
+                temp = temp.Substring(2); // skipping the Room name size
+
+                _Values[i + 1] = temp.Substring(0, RoomNameSize); //RoomName
+                temp = temp.Substring(RoomNameSize); // Skipping the RoomName
+            }
+
+        }
+
+        public void ParameteredAllRoomUsers()
+        {
+            string temp = _StringedMessage;
+            int NumberOfPlayers, UserLength;
+            temp = temp.Substring(3); // skipping the code.
+
+            NumberOfPlayers = Convert.ToInt16(temp.Substring(0, 1));
+            _Values = new string[1 + (2 * NumberOfPlayers)];
+            _Values[0] = NumberOfPlayers.ToString();
+            temp = temp.Substring(1); // skipping the number of players.
+
+            for(int i = 1; i <= NumberOfPlayers; i++)
+            {
+                UserLength = Convert.ToInt16(temp.Substring(0, 2));
+                temp = temp.Substring(2); // Skipping the user length
+
+                _Values[i] = temp.Substring(0, UserLength);
+                temp = temp.Substring(UserLength); // Skiping the User Name.
+            }
+        }
+
+        public void ParameteredJoinRoom()
+        {
+
+        }
+
+        public void ParameteredSendQuestion()
+        {
+
+        }
+
+        public void ParameteredTrueFalse()
+        {
+
+        }
+
+        public void ParameteredEndGame()
+        {
+
+        }
+
+        public void ParameteredBestScores()
+        {
+
+        }
+
+        public void ParameteredPersonalState()
+        {
+            
+        }
+    }
+    #endregion
+
+    #region Codes
     public static class ClientCodes
     {
         public const string SignIn = "200";
@@ -262,11 +402,13 @@ namespace Trivia_Client
         public const string SignUpOther = "1044";
         #endregion
         #region JoinRoom
+        public const string JoinRoom = "110";
         public const string JoinRoomSuccess = "1100";
         public const string JoinRoomFull = "1101";
         public const string JoinRoomFail = "1102";
         #endregion
         #region CreateRoom
+        public const string CreateRoom = "114";
         public const string CreateRoomSuccess = "1140";
         public const string CreateRoomFail = "1141";
         #endregion
@@ -280,4 +422,5 @@ namespace Trivia_Client
         public const string BestScores = "124";
         public const string PersonalState = "126";
     }
+    #endregion
 }

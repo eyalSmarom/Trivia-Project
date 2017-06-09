@@ -39,15 +39,15 @@ namespace Trivia_Client.Pages
             _QuestionTime = QuestionTime.Text;
             if (CheckValidity(_PlayersNumber, _QuestionNumber, _QuestionTime))
             {
-                Room CurrRoom = new Room(1, Convert.ToInt16(_PlayersNumber));
-
+                Room CurrRoom = new Room(Convert.ToInt32(_QuestionNumber), Convert.ToInt32(_PlayersNumber), Convert.ToInt32(_QuestionTime), true, _RoomName);
+         
                 Values[0] = _RoomName;
                 Values[1] = _PlayersNumber;
                 Values[2] = _QuestionNumber;
                 Values[3] = _QuestionTime;
 
-                ClientRecievedMessage Message = new ClientRecievedMessage(ClientCodes.CreateRoom, Values);
-                if (HandleCreateRoom(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty)))
+                ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.CreateRoom, Values);
+                if (HandleCreateRoom(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty), CurrRoom))
                 {
                     Session.CurrentUser.SetRoom(CurrRoom);
                     frame.Source = new Uri("./Pages/Options/RoomPage.xaml", UriKind.Relative);
@@ -79,12 +79,21 @@ namespace Trivia_Client.Pages
             return true;
         }
 
-        public bool HandleCreateRoom(string ReturnedMessage)
+        public bool HandleCreateRoom(string ReturnedMessage, Room CurrRoom)
         {
-            if (ReturnedMessage.Equals(ServerCodes.CreateRoomSuccess))
+            if (ReturnedMessage.Substring(0, 4).Equals(ServerCodes.CreateRoomSuccess))
+            {
+                ReturnedMessage = ReturnedMessage.Substring(4);
+                CurrRoom.Id = Convert.ToInt16(ReturnedMessage.Substring(0, 4));
                 return true;
+            }
             else
                 return false;
+        }
+
+        public List<string> HandleAllUsers(string ReturnedMessage)
+        {
+            return null;
         }
 
         #region Control Interface Implementation
@@ -93,16 +102,15 @@ namespace Trivia_Client.Pages
         }
         public void OnNavigatedFrom(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
         {
+            PlayersNumber.Text = "";
+            RoomName.Text = "";
+            QuestionsNumber.Text = "";
+            QuestionTime.Text = "";
         }
         public void OnNavigatedTo(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
         {
             if (frame == null)
                 frame = e.Frame;
-
-            if (Session.CurrentUser != null && Session.CurrentUser.GetRoom() != null) // Also Need to add handle Close Room
-            {
-                Session.CurrentUser.SetRoom(null);
-            }
         }
         public void OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs e)
         {
