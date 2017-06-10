@@ -12,9 +12,9 @@
                 <TextBlock Text="Join Room" TextAlignment="Center" Style="{StaticResource Heading2}" />
                 <TextBlock Text="Join A Room To Start Playing Trivia" TextAlignment="Center" />
                 <ListView x:Name="Rooms" Margin="20, 20, 20, 0" MinHeight="150">
-                    
+       
                 </ListView>
-                <Button x:Name="JoinRoomButton" Margin="100, 15, 100, 0" MinHeight="30" Width="60" Content="Join"></Button>
+                <Button x:Name="JoinRoomButton" Margin="100, 15, 100, 0" MinHeight="30" Width="60" Content="Join" Click="JoinRoomButton_Click"></Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -8,8 +8,6 @@ Room::Room(int id, User* admin, string name, int maxUsers, int questionsNo, int 
 
 bool Room::joinRoom(User* user)
 {
-	if (this->_users.size() > 1)
-		return false;
 	this->_users.push_back(user);
 	this->sendMessage(this->getUsersListMessage());
 	return true;
@@ -31,9 +29,7 @@ int Room::closeRoom(User* user)
 		return -1;
 	for (vector<User*>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
 	{
-		if ((*it) == _admin)
-			continue;
-		(*it)->send("Closing Room");
+		(*it)->send(to_string(Close_Room_Response));
 		(*it)->clearRoom();
 	}
 	return _id;
@@ -47,6 +43,7 @@ vector<User*>& Room::getUsers()
 string Room::getUsersListMessage()
 {
 	string message = "";
+	message += to_string(All_Rooms_Users_Response);
 	message += to_string(_users.size());
 	for (vector<User*>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
 	{
@@ -99,4 +96,9 @@ void Room::sendMessage(User* excludeUser, string message)
 int Room::getQuestionTime()
 {
 	return _questionTime;
+}
+
+int Room::getMaxUsers()
+{
+	return _maxUsers;
 }

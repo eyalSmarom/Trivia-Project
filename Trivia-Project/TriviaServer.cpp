@@ -116,12 +116,10 @@ void TriviaServer::safeDeleteUser(ReceivedMessage* message)
 		handleSignout(message);
 		closesocket(clientSocket);
 	}
-	catch (exception& e) { cout << e.what() << endl;  }
+	catch (exception& e) { cout << e.what() << endl; cout << "Shutting Socket Down..." << endl; }
 }
 
 #pragma region Handles
-
-
 User* TriviaServer::handleSignIn(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock();
@@ -310,21 +308,23 @@ bool TriviaServer::handleJoinRoom(ReceivedMessage * message)
 	User* user = getUserBySocket(clientSocket);
 	int roomId = stoi(message->getValues()[0], 0, 10);
 	string Message = to_string(Join_Room_Response);
+	Room* room = nullptr;
 
 	if (user != nullptr)
 	{
-		Room* room = getRoomById(roomId);
+		room = getRoomById(roomId);
 		if (room == nullptr) {
 			Message += to_string(Join_Room_Fail_NotExist);
 			return false;
 		}
-		user->joinRoom(room);
+		Message += to_string(Join_Room_Success);
 		Message += Helper::getPaddedNumber(room->getQuestionNo(), 2);
 		Message += Helper::getPaddedNumber(room->getQuestionTime(), 2);
-		Message += to_string(Join_Room_Success);
+		Message += to_string(room->getMaxUsers());
 	}
 
 	Helper::sendData(clientSocket, Message);
+	user->joinRoom(room);
 	return false;
 }
 
@@ -339,6 +339,7 @@ bool TriviaServer::handleLeaveRoom(ReceivedMessage * message)
 		if (room != nullptr)
 		{
 			user->leaveRoom();
+			Helper::sendData(clientSocket, to_string(Leave_Room_Response));
 			return true;
 		}
 	}
@@ -351,7 +352,7 @@ void TriviaServer::handleGetUsersInRoom(ReceivedMessage* message)
 	User* user = getUserBySocket(clientSocket);
 	int roomId = stoi(message->getValues()[0], 0, 10);
 	Room* room = getRoomById(roomId);
-	string Message = to_string(All_Rooms_Users_Response);
+	string Message = "";
 
 	if (room != nullptr)
 	{
@@ -367,7 +368,7 @@ void TriviaServer::handleGetRooms(ReceivedMessage * message)
 {
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
-	string Message = to_string(All_Rooms_List_Request);
+	string Message = to_string(All_Rooms_Response);
 	Message += Helper::getPaddedNumber(_roomsList.size(), 4);
 	Room* temp;
 

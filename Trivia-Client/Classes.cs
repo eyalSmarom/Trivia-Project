@@ -241,6 +241,7 @@ namespace Trivia_Client
         public string[] _Values { get; private set; }
         public string _MessageCode { get; }
         public string _StringedMessage { get; set; }
+        public Exception ErrorMessage { get; private set; }
 
         public ServerReceivedMessage(string Code)
         {
@@ -299,7 +300,7 @@ namespace Trivia_Client
             _Values[0] = temp.Substring(0, 4); // Number of Rooms
             temp = temp.Substring(4);
 
-            for(int i = 1; i <= Convert.ToInt16(_Values[0]); i += 2)
+            for(int i = 1; i <= Convert.ToInt16(_Values[0]) * 2 && Convert.ToInt16(_Values[0]) != 0; i += 2)
             {
                 _Values[i] = temp.Substring(0, 4); // Id
                 temp = temp.Substring(4); // skip[ing the Id
@@ -336,7 +337,39 @@ namespace Trivia_Client
 
         public void ParameteredJoinRoom()
         {
+            string temp = _StringedMessage, Indicator;
 
+            temp = temp.Substring(3); // Skipping the Message Code.
+
+            Indicator = temp.Substring(0, 1); // getting the status.
+            temp = temp.Substring(1);
+
+            switch (Indicator)
+            {
+                case "0":
+                    _Values = new string[3];
+
+                    _Values[0] = temp.Substring(0, 2);
+                    temp = temp.Substring(2);
+
+                    _Values[1] = temp.Substring(0, 2);
+                    temp = temp.Substring(2);
+
+                    _Values[2] = temp.Substring(0, 1);
+                    break;
+
+                case "1":
+                    ErrorMessage = new Exception("Room is Full");
+                    break;
+
+                case "2":
+                    ErrorMessage = new Exception("Room doesn't exist or Other");
+                    break;
+
+                default:
+                    ErrorMessage = new Exception("Unknown Error");
+                    break;
+            }
         }
 
         public void ParameteredSendQuestion()

@@ -70,6 +70,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\Connection\SignOut.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\Connection\SignUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -96,6 +100,9 @@
     </Page>
     <Compile Include="Pages\Connection\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Connection\SignOut.xaml.cs">
+      <DependentUpon>SignOut.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Connection\SignUp.xaml.cs">
       <DependentUpon>SignUp.xaml</DependentUpon>

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Trivia_Client.Pages.Options;
 
 namespace Trivia_Client.Pages
 {
@@ -114,6 +115,7 @@ namespace Trivia_Client.Pages
         }
         public void OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs e)
         {
+  
         }
         #endregion
     }

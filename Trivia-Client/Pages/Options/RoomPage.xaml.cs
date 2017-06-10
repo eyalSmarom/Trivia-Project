@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,6 +25,7 @@ namespace Trivia_Client.Pages.Options
     public partial class RoomPage : UserControl, IContent
     {
         private ModernFrame frame;
+        private Thread HandleRequests;
 
         public RoomPage()
         {
@@ -36,6 +38,10 @@ namespace Trivia_Client.Pages.Options
         /// </summary>
         public void InitiateDetails()
         {
+            var Window = Application.Current.MainWindow as ModernWindow;
+
+            Window.TitleLinks.RemoveAt(0);
+
             Room ThisRoom = Session.CurrentUser.GetRoom();
             ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.AllRoomUsers, new string[] { ThisRoom.Id.ToString().PadLeft(4, '0') });
             ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.AllRoomUsers, Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty)); // Getting all the room Users
@@ -59,6 +65,7 @@ namespace Trivia_Client.Pages.Options
             }
 
             ListViewItem temp;
+            Players.Items.Clear();
             foreach (var item in Users)
             {
                 temp = new ListViewItem();
@@ -66,16 +73,32 @@ namespace Trivia_Client.Pages.Options
                 Players.Items.Add(temp);
             }
 
+            if (!ThisRoom.IsAdmin)
+                StartGame.Visibility = Visibility.Collapsed;
+
+            HandleRequests = new Thread(new ThreadStart(HandlePlayers)); // A Thread to listen to other players join/Exit
+
+            HandleRequests.Start();
         }
 
         public bool HandleCloseRoom(string ReturnedMessage)
         {
-            if (ReturnedMessage.Equals(ServerCodes.CloseRoom))
+            if (ReturnedMessage.Equals(ServerCodes.CloseRoom + "0"))
+            {
+                Session.CurrentUser.SetRoom(null);
                 return true;
+            }
             else
                 return false;
         }
 
+        public bool HandleLeaveRoom(string ReturnedMessage)
+        {
+            if (ReturnedMessage.Equals(ServerCodes.LeaveRoom + "0"))
+                return true;
+            else
+                return false;
+        }
 
         #region Control Interface Implementation
         public void OnFragmentNavigation(FirstFloor.ModernUI.Windows.Navigation.FragmentNavigationEventArgs e)
@@ -83,26 +106,33 @@ namespace Trivia_Client.Pages.Options
         }
         public void OnNavigatedFrom(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
         {
+            
+        }
+        public void OnNavigatedTo(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
+        {
+            if (frame == null)
+                frame = e.Frame;
+            else
+                InitiateDetails();
+            if (Session.CurrentUser != null && Session.CurrentUser.GetRoom() == null)
+                e.Frame.Source = new Uri("./Pages/Options/CreateRoom.xaml", UriKind.Relative);
+        }
+        public void OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs e)
+        {
             ClientReceivedMessage Message;
 
             if (Session.CurrentUser != null && Session.CurrentUser.GetRoom() != null && Session.CurrentUser.GetRoom().IsAdmin) // Also Need to add handle Close Room Only If the Player Was Admin
             {
                 Session.CurrentUser.SetRoom(null);
                 Message = new ClientReceivedMessage(ClientCodes.CloseRoom);
-                HandleCloseRoom(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty));
+                Session.CurrentUser.GetSocket().Send(Encoding.ASCII.GetBytes(Message._StringedMessage));
             }
-        }
-        public void OnNavigatedTo(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
-        {
-            if (frame == null)
-                frame = e.Frame;
-
-            if (Session.CurrentUser != null && Session.CurrentUser.GetRoom() == null)
-                e.Frame.Source = new Uri("./Pages/Options/CreateRoom.xaml", UriKind.Relative);
-        }
-        public void OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs e)
-        {
-            
+            else if (Session.CurrentUser != null && Session.CurrentUser.GetRoom() != null && !Session.CurrentUser.GetRoom().IsAdmin)
+            {
+                Session.CurrentUser.SetRoom(null);
+                Message = new ClientReceivedMessage(ClientCodes.LeaveRoom);
+                Session.CurrentUser.GetSocket().Send(Encoding.ASCII.GetBytes(Message._StringedMessage));
+            }
         }
         #endregion
 
@@ -111,5 +141,69 @@ namespace Trivia_Client.Pages.Options
             byte[] bytes = new byte[1024];
             Session.CurrentUser.GetSocket().Receive(bytes);
         }
+
+        #region Thread
+        private void HandlePlayers()
+        {
+            while (true)
+            {
+                byte[] bytes = new byte[1024];
+                string Response;
+
+                Session.CurrentUser.GetSocket().Receive(bytes);
+                Response = Encoding.ASCII.GetString(bytes).Replace("\0", String.Empty);
+                if (Response.Substring(0, 3).Equals(ServerCodes.CloseRoom)) // Closing the Room
+                {
+                    HandleCloseRoom(Response);
+                    if (Session.CurrentUser.GetRoom() != null && !Session.CurrentUser.GetRoom().IsAdmin)
+                        frame.Dispatcher.Invoke(new ChangeFrameCallback(ChangeFrame), new Uri("./Pages/Home.xaml", UriKind.Relative));
+                    break;
+                }
+                else if (Response.Substring(0, 3).Equals(ServerCodes.LeaveRoom)) // Leaving the Room
+                {
+                    HandleLeaveRoom(Response);
+                    break;
+                }
+                else
+                {
+                    ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.AllRoomUsers, Response);
+                    Players.Dispatcher.Invoke(new UpdateViewCallback(UpdateView), ServerMessage);
+                }
+            }
+        }
+
+        public delegate void UpdateViewCallback(ServerReceivedMessage ServerMessage);
+        public delegate void ChangeFrameCallback(Uri Path);
+
+
+        private void ChangeFrame(Uri Path)
+        {
+            frame.Source = Path;
+        }
+
+        private void UpdateView(ServerReceivedMessage ServerMessage)
+        {
+            Room ThisRoom = Session.CurrentUser.GetRoom();
+
+            List<string> Users = new List<string>(Convert.ToInt16(ServerMessage._Values[0]));
+
+            for (int i = 1; i <= Convert.ToInt16(ServerMessage._Values[0]); i++)
+            {
+                Users.Add(ServerMessage._Values[i]);
+            }
+
+            PlayersNum.Text = "Number of connected users: " + Users.Count + "/" + ThisRoom.MaxUsers; // initiating Number of Players.
+
+            ListViewItem temp;
+            Players.Items.Clear();
+
+            foreach (var item in Users)
+            {
+                temp = new ListViewItem();
+                temp.Content = item;
+                Players.Items.Add(temp);
+            }
+        }
+    #endregion
     }
 }

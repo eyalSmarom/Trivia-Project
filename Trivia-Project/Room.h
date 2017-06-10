@@ -16,6 +16,7 @@ public:
 	int getQuestionNo();
 	int getQuestionTime();
 	int getId();
+	int getMaxUsers();
 	string getName();
 	User* getAdmin();
 	~Room();

@@ -69,7 +69,8 @@ bool User::joinRoom(Room* newRoom)
 {
 	if (this->_currGame != nullptr)
 		return false;
-	newRoom->joinRoom(this);
+	if (newRoom->joinRoom(this))
+		_currRoom = newRoom;
 	return true;
 }
 
@@ -77,8 +78,8 @@ void User::leaveRoom()
 {
 	if (this->_currRoom != nullptr)
 	{
+		_currRoom->leaveRoom(this);
 		this->clearRoom();
-		this->leaveRoom();
 	}
 }
 
@@ -86,7 +87,7 @@ int User::closeRoom()
 {
 	if (this->_currRoom == nullptr)
 		return -1;
-	if (this->_currRoom->getAdmin()->getUsername().compare(this->_username))
+	if (!this->_currRoom->getAdmin()->getUsername().compare(this->_username))
 		return this->_currRoom->closeRoom(this);
 	delete this->_currRoom;
 	this->_currRoom = nullptr;

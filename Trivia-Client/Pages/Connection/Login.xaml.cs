@@ -55,6 +55,13 @@ namespace Trivia_Client.Pages
             {
                 Session.CurrentUser.SetDetails(Username.Text, Password.Password);
                 Session.Logged = true;
+
+                Window.TitleLinks.Add(new FirstFloor.ModernUI.Presentation.Link
+                {
+                    DisplayName = Username.Text + " - Sign Out",
+                    Source = new Uri("./Pages/Connection/SignOut.xaml", UriKind.Relative)
+                });
+
                 Password.Password = null;
                 Username.Text = null;
                 return true;
