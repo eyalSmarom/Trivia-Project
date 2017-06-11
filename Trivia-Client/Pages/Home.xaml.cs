@@ -62,6 +62,7 @@ namespace Trivia_Client.Pages
             var Window = Application.Current.MainWindow as ModernWindow;
 
             Window.MenuLinkGroups.Clear();
+            Window.TitleLinks.Clear();
 
             Window.TitleLinks.Add(new FirstFloor.ModernUI.Presentation.Link()
             {
@@ -134,6 +135,17 @@ namespace Trivia_Client.Pages
         {
             if (frame == null)
                 frame = e.Frame;
+            else
+                 if (Connection())
+                 {
+                     if (!IsLoggedIn())
+                     {
+                        SetConnectionOptions();
+                     }
+                     else
+                        SetMenuPage();
+                 }
+
         }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {

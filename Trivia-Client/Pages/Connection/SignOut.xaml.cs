@@ -1,4 +1,5 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
+﻿using FirstFloor.ModernUI.Windows;
+using FirstFloor.ModernUI.Windows.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,13 @@ namespace Trivia_Client.Pages.Connection
     /// <summary>
     /// Interaction logic for SignOut.xaml
     /// </summary>
-    public partial class SignOut : UserControl
+    public partial class SignOut : UserControl, IContent
     {
         private ModernFrame frame;
 
         public SignOut()
         {
             InitializeComponent();
-            SignUserOut();
         }
 
         public void SignUserOut()
@@ -38,7 +38,7 @@ namespace Trivia_Client.Pages.Connection
             Session.JustSignedUp = false;
             Session.Logged = false;
 
-            App.Current.Shutdown();
+            frame.Source = new Uri("./Pages/Home.xaml", UriKind.Relative);
         }
 
         #region Control Interface Implementation
@@ -52,7 +52,10 @@ namespace Trivia_Client.Pages.Connection
         public void OnNavigatedTo(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
         {
             if (frame == null)
+            {
                 frame = e.Frame;
+                SignUserOut();
+            }
         }
         public void OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs e)
         {
