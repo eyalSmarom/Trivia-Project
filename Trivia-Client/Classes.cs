@@ -456,4 +456,17 @@ namespace Trivia_Client
         public const string PersonalState = "126";
     }
     #endregion
+
+    public static class Paths
+    {
+        public const string SettingsPage = "./Pages/SettingsPage.xaml";
+        public const string Home = "./Pages/Home.xaml";
+        public const string ErrorPage = "./Pages/ErrorPage.xaml";
+        public const string RoomPage = "./Pages/Options/RoomPage.xaml";
+        public const string JoinRoom = "./Pages/Options/JoinRoom.xaml";
+        public const string CreateRoom = "./Pages/Option/CreateRoom.xaml";
+        public const string SignUp = "./Pages/Connection/SignUp.xaml";
+        public const string SignOut = "./Pages/Connection/SignOut.xaml";
+        public const string Login = "./Pages/Connection/Login.xaml";
+    }
 }

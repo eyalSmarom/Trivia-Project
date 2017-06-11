@@ -97,7 +97,7 @@ namespace Trivia_Client.Pages.Options
                 Joined.Id = Convert.ToInt16(temp.Uid);
 
                 Session.CurrentUser.SetRoom(Joined);
-                frame.Source = new Uri("./Pages/Options/RoomPage.xaml", UriKind.Relative);
+                frame.Source = new Uri(Paths.RoomPage, UriKind.Relative);
             }
         }
 

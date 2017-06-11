@@ -54,7 +54,7 @@ namespace Trivia_Client.Pages
                 if (HandleCreateRoom(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty), CurrRoom))
                 {
                     Session.CurrentUser.SetRoom(CurrRoom);
-                    frame.Source = new Uri("./Pages/Options/RoomPage.xaml", UriKind.Relative);
+                    frame.Source = new Uri(Paths.RoomPage, UriKind.Relative);
                 }
                 else
                 {

@@ -45,7 +45,7 @@ namespace Trivia_Client.Pages.Connection
             if (HandleSignUp(Session.CurrentUser.SendBackToServer(ClientMessage).Replace("\0", String.Empty)))
             {
                 Session.JustSignedUp = true;
-                frame.Source = new Uri("./Pages/Home.xaml", UriKind.Relative);
+                frame.Source = new Uri(Paths.Home, UriKind.Relative);
             }
         }
 

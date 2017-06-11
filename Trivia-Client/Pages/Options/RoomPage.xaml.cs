@@ -172,7 +172,7 @@ namespace Trivia_Client.Pages.Options
                 {
                     HandleCloseRoom(Response);
                     if (Session.CurrentUser.GetRoom() != null && !Session.CurrentUser.GetRoom().IsAdmin)
-                        frame.Dispatcher.Invoke(new ChangeFrameCallback(ChangeFrame), new Uri("./Pages/Home.xaml", UriKind.Relative));
+                        frame.Dispatcher.Invoke(new ChangeFrameCallback(ChangeFrame), new Uri(Paths.Home, UriKind.Relative));
                     break;
                 }
                 else if (Response.Substring(0, 3).Equals(ServerCodes.LeaveRoom)) // Leaving the Room

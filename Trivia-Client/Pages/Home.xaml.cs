@@ -74,7 +74,7 @@ namespace Trivia_Client.Pages
             Window.TitleLinks.Add(new FirstFloor.ModernUI.Presentation.Link()
             {
                 DisplayName = "Settings",
-                Source = new Uri("./Pages/SettingsPage.xaml", UriKind.Relative)
+                Source = new Uri(Paths.SettingsPage, UriKind.Relative)
             });
 
             Window.MenuLinkGroups.Add(new FirstFloor.ModernUI.Presentation.LinkGroup()
@@ -118,7 +118,7 @@ namespace Trivia_Client.Pages
             Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
             {
                 DisplayName = "Join Room",
-                Source = new Uri("./Pages/Options/JoinRoom.xaml", UriKind.Relative)
+                Source = new Uri(Paths.JoinRoom, UriKind.Relative)
             });
 
             Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()

@@ -46,7 +46,7 @@ namespace Trivia_Client.Pages
             ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.SignIn, Values);
             if(HandleSignIn(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty)))
             {
-                frame.Source = new Uri("./Pages/Home.xaml", UriKind.Relative);
+                frame.Source = new Uri(Paths.Home, UriKind.Relative);
             }
         }
 
@@ -67,7 +67,7 @@ namespace Trivia_Client.Pages
                 Window.TitleLinks.Add(new FirstFloor.ModernUI.Presentation.Link
                 {
                     DisplayName = Username.Text + " - Sign Out",
-                    Source = new Uri("./Pages/Connection/SignOut.xaml", UriKind.Relative)
+                    Source = new Uri(Paths.SignOut, UriKind.Relative)
                 });
 
                 Password.Password = null;
@@ -95,7 +95,7 @@ namespace Trivia_Client.Pages
             if (!Session.Logged)
                 frame = e.Frame;
             else
-                e.Frame.Source = new Uri("./Pages/ErrorPage.xaml", UriKind.Relative);
+                e.Frame.Source = new Uri(Paths.ErrorPage, UriKind.Relative);
         }
         public void OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs e)
         {

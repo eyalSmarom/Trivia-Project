@@ -41,7 +41,7 @@ namespace Trivia_Client.Pages.Connection
             Session.JustSignedUp = false;
             Session.Logged = false;
 
-            frame.Source = new Uri("./Pages/Home.xaml", UriKind.Relative);
+            frame.Source = new Uri(Paths.Home, UriKind.Relative);
         }
 
         #region Control Interface Implementation
