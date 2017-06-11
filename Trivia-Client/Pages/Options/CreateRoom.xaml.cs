@@ -30,6 +30,9 @@ namespace Trivia_Client.Pages
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Creates the room with the values inserted by the user
+        /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             string _RoomName, _PlayersNumber, _QuestionNumber, _QuestionTime;
@@ -60,6 +63,10 @@ namespace Trivia_Client.Pages
             }
         }
 
+        /// <summary>
+        /// Checks the validity of the values inserted by the user
+        /// </summary>
+        /// <returns>True if valid, false if not</returns>
         private bool CheckValidity(string PlayersNumber, string QuestionNumber, string QuestionTime)
         {
             if (Convert.ToInt16(PlayersNumber) > 9)
@@ -80,6 +87,12 @@ namespace Trivia_Client.Pages
             return true;
         }
 
+        /// <summary>
+        /// Checks if the room was created properly, if he is sets the current room's Id.
+        /// </summary>
+        /// <param name="ReturnedMessage">The string returned from the server</param>
+        /// <param name="CurrRoom">The current room that was created with users values</param>
+        /// <returns>True if created properly, false if not</returns>
         public bool HandleCreateRoom(string ReturnedMessage, Room CurrRoom)
         {
             if (ReturnedMessage.Substring(0, 4).Equals(ServerCodes.CreateRoomSuccess))
@@ -90,11 +103,6 @@ namespace Trivia_Client.Pages
             }
             else
                 return false;
-        }
-
-        public List<string> HandleAllUsers(string ReturnedMessage)
-        {
-            return null;
         }
 
         #region Control Interface Implementation

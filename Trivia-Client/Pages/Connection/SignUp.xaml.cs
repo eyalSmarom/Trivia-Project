@@ -29,6 +29,9 @@ namespace Trivia_Client.Pages.Connection
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Signing up the user.
+        /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             string _Username, _Password, _Email;
@@ -46,6 +49,11 @@ namespace Trivia_Client.Pages.Connection
             }
         }
 
+        /// <summary>
+        /// Checks if the user was properly signed up
+        /// </summary>
+        /// <param name="ReturnedMessage">The string returned from the server</param>
+        /// <returns>True if was created properly, flase if not</returns>
         private bool HandleSignUp(string ReturnedMessage)
         {
             if (ReturnedMessage.Equals(ServerCodes.SignUpSuccess))

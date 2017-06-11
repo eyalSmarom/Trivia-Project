@@ -29,6 +29,9 @@ namespace Trivia_Client.Pages.Connection
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Signing the user out of the system and navigates him to the main page
+        /// </summary>
         public void SignUserOut()
         {
             ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.SignOut);

@@ -33,6 +33,9 @@ namespace Trivia_Client.Pages
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Signing in the user
+        /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             string[] Values = new string[2]; // Setting an array for parameters.
@@ -47,6 +50,11 @@ namespace Trivia_Client.Pages
             }
         }
 
+        /// <summary>
+        /// Checking if the user was properly signed in
+        /// </summary>
+        /// <param name="ReturnedMessage">The string returned from the server</param>
+        /// <returns>True if was signed in properly, false if not</returns>
         private bool HandleSignIn(string ReturnedMessage)
         {
             var Window = Application.Current.MainWindow as ModernWindow;

@@ -81,6 +81,11 @@ namespace Trivia_Client.Pages.Options
             HandleRequests.Start();
         }
 
+        /// <summary>
+        /// Checks if the the room was closed properly
+        /// </summary>
+        /// <param name="ReturnedMessage">The string returned from the server</param>
+        /// <returns>True if closed properly, false if not</returns>
         public bool HandleCloseRoom(string ReturnedMessage)
         {
             if (ReturnedMessage.Equals(ServerCodes.CloseRoom + "0"))
@@ -92,6 +97,11 @@ namespace Trivia_Client.Pages.Options
                 return false;
         }
 
+        /// <summary>
+        /// Checks if the user left the room properly
+        /// </summary>
+        /// <param name="ReturnedMessage">The string returned from the server</param>
+        /// <returns>True if left properly, false if not</returns>
         public bool HandleLeaveRoom(string ReturnedMessage)
         {
             if (ReturnedMessage.Equals(ServerCodes.LeaveRoom + "0"))
@@ -136,6 +146,9 @@ namespace Trivia_Client.Pages.Options
         }
         #endregion
 
+        /// <summary>
+        /// Get's the server Response another time in order to clean the buffer
+        /// </summary>
         private void FFlush()
         {
             byte[] bytes = new byte[1024];
@@ -143,6 +156,9 @@ namespace Trivia_Client.Pages.Options
         }
 
         #region Thread
+        /// <summary>
+        /// The main function for the thread which listens to new Requests
+        /// </summary>
         private void HandlePlayers()
         {
             while (true)
@@ -175,12 +191,19 @@ namespace Trivia_Client.Pages.Options
         public delegate void UpdateViewCallback(ServerReceivedMessage ServerMessage);
         public delegate void ChangeFrameCallback(Uri Path);
 
-
+        /// <summary>
+        /// Changing the frame (Navigation)
+        /// </summary>
+        /// <param name="Path">The path to navigate to</param>
         private void ChangeFrame(Uri Path)
         {
             frame.Source = Path;
         }
 
+        /// <summary>
+        /// Updating the view according to the new message from the server
+        /// </summary>
+        /// <param name="ServerMessage">The message from the server</param>
         private void UpdateView(ServerReceivedMessage ServerMessage)
         {
             Room ThisRoom = Session.CurrentUser.GetRoom();

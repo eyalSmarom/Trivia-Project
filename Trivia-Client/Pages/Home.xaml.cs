@@ -33,6 +33,10 @@ namespace Trivia_Client.Pages
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Trying to connect to the server socket.
+        /// </summary>
+        /// <returns>True if Already Connected or Succeeded. False if Couldn't Connect</returns>
         private bool Connection()
         {
             if ((Session.CurrentUser != null && Session.CurrentUser.GetSocket() != null) || Session.JustSignedUp)
@@ -57,6 +61,9 @@ namespace Trivia_Client.Pages
                 return false;
         }
 
+        /// <summary>
+        /// Setting The Connection Options on the Main Window
+        /// </summary>
         private void SetConnectionOptions()
         {
             var Window = Application.Current.MainWindow as ModernWindow;
@@ -88,6 +95,9 @@ namespace Trivia_Client.Pages
             });
         }
 
+        /// <summary>
+        /// Setting the menu page if the user is connected
+        /// </summary>
         private void SetMenuPage()
         {
             var Window = Application.Current.MainWindow as ModernWindow;

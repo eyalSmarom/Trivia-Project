@@ -31,6 +31,9 @@ namespace Trivia_Client.Pages.Options
             InitializeRooms();
         }
 
+        /// <summary>
+        /// Initializes the list of the rooms
+        /// </summary>
         private void InitializeRooms()
         {
             ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.AllRoomsList);
@@ -76,6 +79,9 @@ namespace Trivia_Client.Pages.Options
         }
         #endregion
 
+        /// <summary>
+        /// Joins the player pushed the button to the room he chosed
+        /// </summary>
         private void JoinRoomButton_Click(object sender, RoutedEventArgs e)
         {
             ListViewItem temp = (ListViewItem)Rooms.SelectedItem;
