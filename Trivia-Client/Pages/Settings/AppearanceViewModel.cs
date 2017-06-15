@@ -18,19 +18,6 @@ namespace Trivia_Client.Pages.Settings
         private const string FontSmall = "small";
         private const string FontLarge = "large";
 
-        // 9 accent colors from metro design principles
-        /*private Color[] accentColors = new Color[]{
-            Color.FromRgb(0x33, 0x99, 0xff),   // blue
-            Color.FromRgb(0x00, 0xab, 0xa9),   // teal
-            Color.FromRgb(0x33, 0x99, 0x33),   // green
-            Color.FromRgb(0x8c, 0xbf, 0x26),   // lime
-            Color.FromRgb(0xf0, 0x96, 0x09),   // orange
-            Color.FromRgb(0xff, 0x45, 0x00),   // orange red
-            Color.FromRgb(0xe5, 0x14, 0x00),   // red
-            Color.FromRgb(0xff, 0x00, 0x97),   // magenta
-            Color.FromRgb(0xa2, 0x00, 0xff),   // purple            
-        };*/
-
         // 20 accent colors from Windows Phone 8
         private Color[] accentColors = new Color[]{
             Color.FromRgb(0xa4, 0xc4, 0x00),   // lime
@@ -67,6 +54,7 @@ namespace Trivia_Client.Pages.Settings
             this.themes.Add(new Link { DisplayName = "light", Source = AppearanceManager.LightThemeSource });
 
             this.SelectedFontSize = AppearanceManager.Current.FontSize == FontSize.Large ? FontLarge : FontSmall;
+            AppearanceManager.Current.AccentColor = Color.FromRgb(0xe5, 0x14, 0x00);
             SyncThemeAndColor();
 
             AppearanceManager.Current.PropertyChanged += OnAppearanceManagerPropertyChanged;

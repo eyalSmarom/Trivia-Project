@@ -18,7 +18,7 @@
                     <ListView x:Name="Players" Height="100" Margin="20,76,20,0">
                         
                     </ListView>
-                    <Button x:Name="StartGame" Content="Start Game" VerticalAlignment="Top" Margin="75,198,76,-4"/>
+                    <Button x:Name="StartGame" Content="Start Game" VerticalAlignment="Top" Margin="75,198,76,-4" Click="StartGame_Click"/>
                 </Grid>
             </StackPanel>
         </ScrollViewer>

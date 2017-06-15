@@ -33,7 +33,7 @@ string Question::getQuestion()
 
 string * Question::getAnswers()
 {
-	return _answers;
+	return new string[4]{ _answers[0], _answers[1], _answers[2], _answers[3] };
 }
 
 int Question::getCorrectAnswerIndex()

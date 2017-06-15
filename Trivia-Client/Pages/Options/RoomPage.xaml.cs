@@ -26,6 +26,8 @@ namespace Trivia_Client.Pages.Options
     {
         private ModernFrame frame;
         private Thread HandleRequests;
+        private string _RoomName;
+        int _NumberOfPlayers, _QuestionNum, _QuestionTime;
 
         public RoomPage()
         {
@@ -48,9 +50,12 @@ namespace Trivia_Client.Pages.Options
 
             FFlush();
 
-            RoomName.Text = ThisRoom.RoomName; // Initiating The Room's Name.
+            _RoomName = RoomName.Text = ThisRoom.RoomName; // Initiating The Room's Name.
 
-            int NumberOfPlayers = Convert.ToInt16(ServerMessage._Values[0]);
+            int NumberOfPlayers = _NumberOfPlayers = Convert.ToInt16(ServerMessage._Values[0]);
+            _QuestionNum = ThisRoom.QuestionNumber;
+            _QuestionTime = ThisRoom.QuestionTime;
+
             PlayersNum.Text = "Number of connected users: " + NumberOfPlayers + "/" + ThisRoom.MaxUsers; // initiating Number of Players.
 
             QuestionNum.Text = "Number of question in the trivia: " + ThisRoom.QuestionNumber; // Initiating Questions Number.
@@ -180,6 +185,11 @@ namespace Trivia_Client.Pages.Options
                     HandleLeaveRoom(Response);
                     break;
                 }
+                else if (Response.Substring(0, 3).Equals(ServerCodes.SendQuestions))
+                {
+                    HandleStartGame(Response);
+                    break;
+                }
                 else
                 {
                     ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.AllRoomUsers, Response);
@@ -227,6 +237,34 @@ namespace Trivia_Client.Pages.Options
                 Players.Items.Add(temp);
             }
         }
-    #endregion
+        #endregion
+
+        private void StartGame_Click(object sender, RoutedEventArgs e)
+        {
+            ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.StartGame);
+            Session.CurrentUser.GetSocket().Send(Encoding.ASCII.GetBytes(ClientMessage._StringedMessage));
+        }
+
+        private void HandleStartGame(string Response)
+        {
+            ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.SendQuestions, Response);
+
+            if (ServerMessage._MessageCode.Equals(ServerCodes.SendQuestions + "0")) // The Start Game action did not work
+                return;
+
+            Session.CurrentUser.SetRoom(null);
+
+            Question Current = new Question();
+            Current._Question = ServerMessage._Values[0];
+            for (int i = 1; i <= 4; i++)
+            {
+                Current._Answers.Add(ServerMessage._Values[i]);
+            }
+
+            Trivia_Client.Game newGame = new Trivia_Client.Game(_NumberOfPlayers, _QuestionNum, _QuestionTime);
+            newGame.CurrentQuestion = Current;
+            Session.CurrentUser.SetGame(newGame);
+            frame.Dispatcher.Invoke(new ChangeFrameCallback(ChangeFrame), new Uri(Paths.GamePage, UriKind.Relative));// Redirecting to the Game Page
+        }
     }
 }

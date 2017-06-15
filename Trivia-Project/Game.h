@@ -28,7 +28,7 @@ private:
 	vector<User*> _players;
 	int _questionNo;
 	int _currQuestionIndex;
-	int _currentTurnAnswers;
+	int static _currentTurnAnswers;
 	int _gameId;
 	DataBase _db;
 	map<string, int> _results;

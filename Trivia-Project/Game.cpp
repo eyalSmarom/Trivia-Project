@@ -4,6 +4,8 @@
 #include "Database.h"
 #include "Question.h"
 
+int Game::_currentTurnAnswers = 0;
+
 Game::Game(const vector<User*>& players, int questionNo, DataBase& db)
 {
 	try
@@ -11,6 +13,8 @@ Game::Game(const vector<User*>& players, int questionNo, DataBase& db)
 		DataBase* temp = new DataBase(db);
 		_db = *temp;
 		
+		_currentTurnAnswers = 0;
+
 		_questionNo = questionNo;
 		_gameId = _db.insertNewGame();
 
@@ -144,10 +148,10 @@ bool Game::handleAnswerFromUser(User* user, int answerNo, int time)
 	{
 		message = "1";
 		_results.find(user->getUsername())->second += 1;
-		_db.addAnswerToPlayer(_gameId, user->getUsername(), _currQuestionIndex, currQuestion->getAnswers()[answerNo], true, time); // Inserting the db record (true answer)
+		_db.addAnswerToPlayer(_gameId, user->getUsername(), _currQuestionIndex, currQuestion->getAnswers()[answerNo - 1], true, time); // Inserting the db record (true answer)
 	}
 	else
-		_db.addAnswerToPlayer(_gameId, user->getUsername(), currQuestion->getId(), currQuestion->getAnswers()[answerNo], false, time); // Inserting the db record (false answer)
+		_db.addAnswerToPlayer(_gameId, user->getUsername(), currQuestion->getId(), currQuestion->getAnswers()[answerNo - 1], false, time); // Inserting the db record (false answer)
 
 	user->send(Code + message);
 

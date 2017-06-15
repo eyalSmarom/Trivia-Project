@@ -18,7 +18,7 @@ namespace Trivia_Client
         public static bool Logged = false;
         public static bool JustSignedUp = false;
     }
-    #region User Room Game
+    #region User Room Game Question
     public class User
     {
         private string Username;
@@ -90,7 +90,7 @@ namespace Trivia_Client
             {
                 ClientSocket.Send(ToSend);
                 int bytesRec = ClientSocket.Receive(ToRecieve);
-                return Encoding.ASCII.GetString(ToRecieve);
+                return Encoding.ASCII.GetString(ToRecieve).Replace("\0", String.Empty);
             }
             catch(Exception e) { return null; }
         }
@@ -123,17 +123,27 @@ namespace Trivia_Client
 
     public class Game
     {
-        int NumberOfUsers;
-        List<string> Users;
-        int QuestionNumber;
-        int QuestionTime;
+        public int NumberOfUsers { get; private set; }
+        public int QuestionNumber { get; private set; }
+        public int QuestionTime { get; private set; }
+        public Question CurrentQuestion { get; set; }
 
-        public Game(int NumberOfUsers, int QuestionNumber, int QuestionTime, List<string> Users)
+        public Game(int NumberOfUsers, int QuestionNumber, int QuestionTime)
         {
             this.NumberOfUsers = NumberOfUsers;
             this.QuestionNumber = QuestionNumber;
             this.QuestionTime = QuestionTime;
-            this.Users = new List<string>(Users);
+        }
+    }
+
+    public class Question
+    {
+        public string _Question;
+        public List<string> _Answers;
+
+        public Question()
+        {
+            _Answers = new List<string>(4);
         }
     }
     #endregion
@@ -239,7 +249,7 @@ namespace Trivia_Client
     public class ServerReceivedMessage
     {
         public string[] _Values { get; private set; }
-        public string _MessageCode { get; }
+        public string _MessageCode { get; private set; }
         public string _StringedMessage { get; set; }
         public Exception ErrorMessage { get; private set; }
 
@@ -269,10 +279,6 @@ namespace Trivia_Client
 
                 case ServerCodes.SendQuestions:
                     ParameteredSendQuestion();
-                    break;
-
-                case ServerCodes.TrueFalse:
-                    ParameteredTrueFalse();
                     break;
 
                 case ServerCodes.EndGame:
@@ -374,17 +380,46 @@ namespace Trivia_Client
 
         public void ParameteredSendQuestion()
         {
+            string temp = _StringedMessage;
+            int Length;
+            _MessageCode = temp.Substring(0, 3);
+            temp = temp.Substring(3); // Skipping the Message Code.
 
-        }
+            _Values = new string[5];
 
-        public void ParameteredTrueFalse()
-        {
+            for(int i = 0; i < 5; i++)
+            {
+                Length = Convert.ToInt16(temp.Substring(0, 3));
+                temp = temp.Substring(3); // Skipping the length
 
+                _Values[i] = temp.Substring(0, Length);
+                temp = temp.Substring(Length); // Skipping the name
+            }
         }
 
         public void ParameteredEndGame()
         {
+            string temp = _StringedMessage;
+            int Length;
+            _MessageCode = temp.Substring(0, 3);
+            temp = temp.Substring(3);
 
+            int NumberOfUsers = Convert.ToInt16(temp.Substring(0, 1));
+            temp = temp.Substring(1);
+
+            _Values = new string[NumberOfUsers * 2];
+
+            for(int i = 1; i < NumberOfUsers * 2; i++)
+            {
+                Length = Convert.ToInt16(temp.Substring(0, 2));
+                temp = temp.Substring(2);
+
+                _Values[i - 1] = temp.Substring(0, Length);
+                temp = temp.Substring(Length);
+
+                _Values[i] = temp.Substring(0, 2);
+                temp = temp.Substring(2);
+            }
         }
 
         public void ParameteredBestScores()
@@ -468,5 +503,7 @@ namespace Trivia_Client
         public const string SignUp = "./Pages/Connection/SignUp.xaml";
         public const string SignOut = "./Pages/Connection/SignOut.xaml";
         public const string Login = "./Pages/Connection/Login.xaml";
+        public const string GamePage = "./Pages/Options/Game.xaml";
+        public const string Scores = "./Pages/Options/Scores.xaml";
     }
 }

@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Trivia_Client.Pages.Settings;
 
 namespace Trivia_Client
 {
@@ -27,6 +28,7 @@ namespace Trivia_Client
         public MainWindow()
         {
             InitializeComponent();
+            AppearanceViewModel appearence = new AppearanceViewModel();
         }
     }
 }

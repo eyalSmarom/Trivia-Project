@@ -25,7 +25,7 @@ void User::send(string message)
 
 string User::getUsername()
 {
-	return this->_username;
+	return string(this->_username);
 }
 
 SOCKET User::getSocket()
