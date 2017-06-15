@@ -309,23 +309,38 @@ bool TriviaServer::handleJoinRoom(ReceivedMessage * message)
 	int roomId = stoi(message->getValues()[0], 0, 10);
 	string Message = to_string(Join_Room_Response);
 	Room* room = nullptr;
+	bool ans = true;
 
 	if (user != nullptr)
 	{
 		room = getRoomById(roomId);
-		if (room == nullptr) {
+		if (room == nullptr)
+		{
 			Message += to_string(Join_Room_Fail_NotExist);
-			return false;
+			ans = false;
 		}
-		Message += to_string(Join_Room_Success);
-		Message += Helper::getPaddedNumber(room->getQuestionNo(), 2);
-		Message += Helper::getPaddedNumber(room->getQuestionTime(), 2);
-		Message += to_string(room->getMaxUsers());
+		else if (room->getUsers().size() == room->getMaxUsers())
+		{
+			Message += to_string(Join_Room_Fail_Full);
+			ans = false;
+		}
+		else
+		{
+			Message += to_string(Join_Room_Success);
+			Message += Helper::getPaddedNumber(room->getQuestionNo(), 2);
+			Message += Helper::getPaddedNumber(room->getQuestionTime(), 2);
+			Message += to_string(room->getMaxUsers());
+		}
 	}
 
 	Helper::sendData(clientSocket, Message);
-	user->joinRoom(room);
-	return false;
+	
+	if (ans)
+	{
+		user->joinRoom(room);
+	}
+
+	return ans;
 }
 
 bool TriviaServer::handleLeaveRoom(ReceivedMessage * message)

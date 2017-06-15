@@ -65,6 +65,7 @@ namespace Trivia_Client.Pages.Options
         }
         public void OnNavigatedFrom(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
         {
+            ErroMessages.Text = "";
         }
         public void OnNavigatedTo(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
         {
@@ -89,15 +90,21 @@ namespace Trivia_Client.Pages.Options
             ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.JoinRoom, new string[] { temp.Uid.PadLeft(4, '0') });
             ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.JoinRoom, Session.CurrentUser.SendBackToServer(ClientMessage).Replace("/0", String.Empty));
 
-            ServerReceivedMessage Disposal = new ServerReceivedMessage(ServerCodes.AllRoomUsers, GetUsers());
+
 
             if(ServerMessage.ErrorMessage == null)
             {
+                ServerReceivedMessage Disposal = new ServerReceivedMessage(ServerCodes.AllRoomUsers, GetUsers());
+
                 Room Joined = new Room(Convert.ToInt16(ServerMessage._Values[0]), Convert.ToInt16(ServerMessage._Values[2]), Convert.ToInt16(ServerMessage._Values[1]), false, temp.Content.ToString());
                 Joined.Id = Convert.ToInt16(temp.Uid);
 
                 Session.CurrentUser.SetRoom(Joined);
                 frame.Source = new Uri(Paths.RoomPage, UriKind.Relative);
+            }
+            else
+            {
+                ErroMessages.Text = ServerMessage.ErrorMessage.Message;
             }
         }
 

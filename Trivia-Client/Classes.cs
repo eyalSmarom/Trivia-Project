@@ -409,7 +409,7 @@ namespace Trivia_Client
 
             _Values = new string[NumberOfUsers * 2];
 
-            for(int i = 1; i < NumberOfUsers * 2; i++)
+            for(int i = 1; i < NumberOfUsers * 2; i += 2)
             {
                 Length = Convert.ToInt16(temp.Substring(0, 2));
                 temp = temp.Substring(2);

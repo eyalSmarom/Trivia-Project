@@ -33,11 +33,12 @@ namespace Trivia_Client.Pages.Options
 
         private void InitializeScores(ServerReceivedMessage ServerMessage)
         {
-            ListViewItem Item = new ListViewItem();
+            ListViewItem Item;
             UIScores.Items.Clear();
             for(int i = 0; i < ServerMessage._Values.Length; i += 2)
             {
-                Item.Content = ServerMessage._Values[i] + " - " + ServerMessage._Values[i + 1];
+                Item = new ListViewItem();
+                Item.Content = ServerMessage._Values[i] + " - " + Convert.ToInt16(ServerMessage._Values[i + 1]);
                 UIScores.Items.Add(Item);
             }
         }

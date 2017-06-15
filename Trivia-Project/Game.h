@@ -31,7 +31,7 @@ private:
 	int static _currentTurnAnswers;
 	int _gameId;
 	DataBase _db;
-	map<string, int> _results;
+	map<string, int> static _results;
 
 	void sendQuestionToAllUsers();
 };

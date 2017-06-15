@@ -5,6 +5,7 @@
 #include "Question.h"
 
 int Game::_currentTurnAnswers = 0;
+map<string, int> Game::_results = map<string, int>();
 
 Game::Game(const vector<User*>& players, int questionNo, DataBase& db)
 {
@@ -26,9 +27,6 @@ Game::Game(const vector<User*>& players, int questionNo, DataBase& db)
 
 		// initiate the players
 		_players = players;
-
-		// initiate the results
-		_results = map<string, int>();
 
 		// initiate the current question index
 		_currQuestionIndex = 0;
