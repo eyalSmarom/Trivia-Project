@@ -96,6 +96,7 @@ void TriviaServer::accept()
 void TriviaServer::clientHandler(SOCKET socket)
 {
 	int code;
+	srand(time(0));
 	code = Helper::getMessageTypeCode(socket);
 	while (code != 0)
 	{

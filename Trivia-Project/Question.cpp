@@ -3,7 +3,6 @@
 Question::Question(int id, string question, string correctAnswer, string answer2, string answer3, string answer4)
 {
 	int correctAnswerIndex, index2 = -1, index3 = -1, index4 = -1;
-	srand(time(NULL));
 
 	_id = id;
 	_question = string(question);
