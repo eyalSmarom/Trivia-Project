@@ -113,6 +113,7 @@ namespace Trivia_Client.Pages.Options
                 UpdateButtonColor(QuestionNumber, false);
             }
             Answer1.Dispatcher.Invoke((Action)(() => { }), DispatcherPriority.Render); // Forcing wpf to process the UI modification before the thread sleeps.
+            Thread.Sleep(500);
             GetNextQuestion();
         }
 

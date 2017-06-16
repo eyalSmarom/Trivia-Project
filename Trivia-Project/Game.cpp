@@ -68,6 +68,8 @@ Game::~Game()
 	{
 		delete (*it);
 	}
+
+	_results.clear();
 }
 
 void Game::sendFirstQuestion()

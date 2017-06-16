@@ -80,6 +80,8 @@ namespace Trivia_Client.Pages.Options
 
             if (!ThisRoom.IsAdmin)
                 StartGame.Visibility = Visibility.Collapsed;
+            else
+                StartGame.Visibility = Visibility.Visible;
 
             HandleRequests = new Thread(new ThreadStart(HandlePlayers)); // A Thread to listen to other players join/Exit
 
