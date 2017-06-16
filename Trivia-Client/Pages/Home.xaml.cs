@@ -71,12 +71,6 @@ namespace Trivia_Client.Pages
             Window.MenuLinkGroups.Clear();
             Window.TitleLinks.Clear();
 
-            Window.TitleLinks.Add(new FirstFloor.ModernUI.Presentation.Link()
-            {
-                DisplayName = "Settings",
-                Source = new Uri(Paths.SettingsPage, UriKind.Relative)
-            });
-
             Window.MenuLinkGroups.Add(new FirstFloor.ModernUI.Presentation.LinkGroup()
             {
                 DisplayName = "Connect"
@@ -93,6 +87,12 @@ namespace Trivia_Client.Pages
                 DisplayName = "SignUp",
                 Source = new Uri("/Pages/Connection/Signup.xaml", UriKind.Relative)
             });
+
+            Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
+            {
+                DisplayName = "Settings",
+                Source = new Uri(Paths.SettingsPage, UriKind.Relative)
+            });
         }
 
         /// <summary>
@@ -103,6 +103,7 @@ namespace Trivia_Client.Pages
             var Window = Application.Current.MainWindow as ModernWindow;
 
             Window.MenuLinkGroups.Clear();
+            Window.TitleLinks.Clear();
 
             Window.MenuLinkGroups.Add(new FirstFloor.ModernUI.Presentation.LinkGroup()
             {
@@ -131,6 +132,18 @@ namespace Trivia_Client.Pages
             {
                 DisplayName = "Personal State",
                 Source = new Uri("./Pages/Options/PersonalState.xaml", UriKind.Relative)
+            });
+
+            Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
+            {
+                DisplayName = "Sign Out",
+                Source = new Uri(Paths.SignOut, UriKind.Relative)
+            });
+
+            Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
+            {
+                DisplayName = "Settings",
+                Source = new Uri(Paths.SettingsPage, UriKind.Relative)
             });
         }
 
