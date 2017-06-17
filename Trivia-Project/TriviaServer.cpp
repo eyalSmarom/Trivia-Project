@@ -98,7 +98,7 @@ void TriviaServer::clientHandler(SOCKET socket)
 	int code;
 	srand(time(0));
 	code = Helper::getMessageTypeCode(socket);
-	while (code != 0)
+	while (code != Leave_App_Request)
 	{
 		try
 		{
@@ -107,6 +107,9 @@ void TriviaServer::clientHandler(SOCKET socket)
 		}
 		catch (exception& e) { cout << e.what() << endl; safeDeleteUser(new ReceivedMessage(socket, 0)); break; }
 	}
+
+	safeDeleteUser(new ReceivedMessage(socket, code));
+	cout << "Ended Communication With User" << endl;
 }
 
 void TriviaServer::safeDeleteUser(ReceivedMessage* message)

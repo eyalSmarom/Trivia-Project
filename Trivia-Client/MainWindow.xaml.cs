@@ -30,5 +30,17 @@ namespace Trivia_Client
             InitializeComponent();
             AppearanceViewModel appearence = new AppearanceViewModel();
         }
+
+        /// <summary>
+        /// Ending communication between the server and the client.
+        /// </summary>
+        private void ModernWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(Session.CurrentUser != null && Session.CurrentUser.GetSocket() != null)
+            {
+                string EndCommunication = ClientCodes.LeaveApp;
+                Session.CurrentUser.GetSocket().Send(Encoding.ASCII.GetBytes(EndCommunication));
+            }
+        }
     }
 }

@@ -94,6 +94,11 @@ namespace Trivia_Client
             }
             catch(Exception e) { return null; }
         }
+
+        public string GetUsername()
+        {
+            return Username;
+        }
     }
 
     public class Room

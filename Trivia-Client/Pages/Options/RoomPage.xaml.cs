@@ -42,7 +42,7 @@ namespace Trivia_Client.Pages.Options
         {
             var Window = Application.Current.MainWindow as ModernWindow;
 
-            Window.TitleLinks.RemoveAt(0);
+            Window.TitleLinks.Clear();
 
             Room ThisRoom = Session.CurrentUser.GetRoom();
             ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.AllRoomUsers, new string[] { ThisRoom.Id.ToString().PadLeft(4, '0') });

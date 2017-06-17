@@ -126,5 +126,16 @@ namespace Trivia_Client.Pages
   
         }
         #endregion
+
+        /// <summary>
+        /// Default values for the room
+        /// </summary>
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            RoomName.Text = Session.CurrentUser.GetUsername() + "'s Room";
+            PlayersNumber.Text = "9";
+            QuestionsNumber.Text = "5";
+            QuestionTime.Text = "15";
+        }
     }
 }
