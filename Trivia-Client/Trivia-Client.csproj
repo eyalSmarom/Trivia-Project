@@ -98,6 +98,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\Options\PersonalStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\Options\RoomPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -133,6 +137,9 @@
     </Compile>
     <Compile Include="Pages\Options\JoinRoom.xaml.cs">
       <DependentUpon>JoinRoom.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Options\PersonalStatus.xaml.cs">
+      <DependentUpon>PersonalStatus.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Options\RoomPage.xaml.cs">
       <DependentUpon>RoomPage.xaml</DependentUpon>

@@ -301,10 +301,10 @@ vector<string> DataBase::getPersonalStatus(string username)
 				string avgTime = (char*)sqlite3_column_text(stmt, 3);//not sure if its working.. gets data from the row
 				int avargeTime = atoi(avgTime.c_str());
 				string wrongAnswers = to_string(atoi(questionsCount.c_str()) - correctAnswersCount);
-				personalStatus.push_back(wrongAnswers);
-				personalStatus.push_back(avgTime);//insert data to vector
-				personalStatus.push_back(correctAnswers);
 				personalStatus.push_back(gamesCount);
+				personalStatus.push_back(correctAnswers);//insert data to vector
+				personalStatus.push_back(wrongAnswers);
+				personalStatus.push_back(avgTime.substr(0,4));
 			}
 			else if (s == SQLITE_DONE)
 			{

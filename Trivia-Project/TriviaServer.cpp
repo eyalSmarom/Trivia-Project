@@ -404,7 +404,27 @@ void TriviaServer::handleGetRooms(ReceivedMessage * message)
 
 void TriviaServer::handleGetPersonalStatus(ReceivedMessage * message)
 {
-	/*To Do ...*/
+	SOCKET clientSocket = message->getSock();
+	User* user = getUserBySocket(clientSocket);
+	string Message = to_string(Personal_State_Response);
+
+	try
+	{
+		if (user != nullptr)
+		{
+			vector<string> personalStatus = _db.getPersonalStatus(user->getUsername());
+			Message += Helper::getPaddedNumber(atoi(personalStatus[0].c_str()), 4); // Number of Games played
+			Message += Helper::getPaddedNumber(atoi(personalStatus[1].c_str()), 6); // Number of Correct Answers
+			Message += Helper::getPaddedNumber(atoi(personalStatus[2].c_str()), 6); // Number of Wrong Answers
+			Message += personalStatus[3];
+		}
+
+		user->send(Message);
+	}
+	catch (...)
+	{
+		
+	}
 }
 
 void TriviaServer::handleGetBestScores(ReceivedMessage * message)

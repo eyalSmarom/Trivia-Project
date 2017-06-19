@@ -131,7 +131,7 @@ namespace Trivia_Client.Pages
             Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
             {
                 DisplayName = "Personal State",
-                Source = new Uri("./Pages/Options/PersonalState.xaml", UriKind.Relative)
+                Source = new Uri("./Pages/Options/PersonalStatus.xaml", UriKind.Relative)
             });
 
             Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()

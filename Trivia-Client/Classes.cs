@@ -457,7 +457,20 @@ namespace Trivia_Client
 
         public void ParameteredPersonalState()
         {
-            
+            string temp = _StringedMessage;
+            temp = temp.Substring(3); // Skipping the Message Code.
+
+            _Values = new string[4];
+            _Values[0] = temp.Substring(0, 4); // Number of Games Played
+            temp = temp.Substring(4);
+
+            _Values[1] = temp.Substring(0, 6); // Number of Correct Answers
+            temp = temp.Substring(6);
+
+            _Values[2] = temp.Substring(0, 6); // Number of Wrong Answers
+            temp = temp.Substring(6);
+
+            _Values[3] = temp; // Average Time for answer
         }
     }
     #endregion
