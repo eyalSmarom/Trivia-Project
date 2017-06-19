@@ -151,7 +151,10 @@ bool Game::handleAnswerFromUser(User* user, int answerNo, int time)
 		_db.addAnswerToPlayer(_gameId, user->getUsername(), _currQuestionIndex, currQuestion->getAnswers()[answerNo - 1], true, time); // Inserting the db record (true answer)
 	}
 	else
-		_db.addAnswerToPlayer(_gameId, user->getUsername(), currQuestion->getId(), currQuestion->getAnswers()[answerNo - 1], false, time); // Inserting the db record (false answer)
+		if(answerNo == 5)
+			_db.addAnswerToPlayer(_gameId, user->getUsername(), currQuestion->getId(), "Didn't answered in time" , false, time); // Inserting the db record (false answer)
+		else
+			_db.addAnswerToPlayer(_gameId, user->getUsername(), currQuestion->getId(), currQuestion->getAnswers()[answerNo - 1], false, time); // Inserting the db record (false answer)
 
 	user->send(Code + message);
 

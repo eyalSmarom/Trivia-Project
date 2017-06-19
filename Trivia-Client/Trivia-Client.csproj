@@ -78,6 +78,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\Options\BestScores.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\Options\CreateRoom.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -114,6 +118,9 @@
     </Compile>
     <Compile Include="Pages\Connection\SignUp.xaml.cs">
       <DependentUpon>SignUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Options\BestScores.xaml.cs">
+      <DependentUpon>BestScores.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Options\CreateRoom.xaml.cs">
       <DependentUpon>CreateRoom.xaml</DependentUpon>

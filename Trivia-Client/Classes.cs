@@ -429,7 +429,30 @@ namespace Trivia_Client
 
         public void ParameteredBestScores()
         {
+            string temp = _StringedMessage.Replace("\0", String.Empty);
+            int Length, i;
+            temp = temp.Substring(3); // Skipping the Message code.
 
+            string[] TempValues = new string[6];
+
+            for(i = 0; i < 6 && temp != String.Empty; i += 2)
+            {
+                Length = Convert.ToInt16(temp.Substring(0, 2));
+                temp = temp.Substring(2);
+
+                TempValues[i] = temp.Substring(0, Length); // Username
+                temp = temp.Substring(Length);
+
+                TempValues[i + 1] = temp.Substring(0, 6); // Scores
+                temp = temp.Substring(6);
+            }
+
+            _Values = new string[i];
+            
+            for(int j = 0; j < i; j++)
+            {
+                _Values[j] = TempValues[j];
+            }
         }
 
         public void ParameteredPersonalState()
@@ -510,5 +533,6 @@ namespace Trivia_Client
         public const string Login = "./Pages/Connection/Login.xaml";
         public const string GamePage = "./Pages/Options/Game.xaml";
         public const string Scores = "./Pages/Options/Scores.xaml";
+        public const string BestScores = "./Pages/Options/BestScores.xaml";
     }
 }

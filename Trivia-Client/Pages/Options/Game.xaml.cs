@@ -93,7 +93,7 @@ namespace Trivia_Client.Pages.Options
             string[] Values = new string[2];
 
             Values[0] = QuestionNumber.ToString();
-            Values[1] = Clock.Text.PadLeft(2, '0');
+            Values[1] = (Session.CurrentUser.GetGame().QuestionTime - Convert.ToInt16(Clock.Text)).ToString();
 
             ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.Answer, Values);
             ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.TrueFalse, Session.CurrentUser.SendBackToServer(ClientMessage));

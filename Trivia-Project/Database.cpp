@@ -1,8 +1,16 @@
 #include "DataBase.h"
 #include "Question.h"
 #include <sys/stat.h>
+#include <algorithm>
 
 #define DB_NAME "TriviaDb.sqlite"
+#define DB_PROBLEM "Database Problem"
+#define QUESTION_INSERT_PROBLEM "Question Insert Problem"
+#define RETRIVING_INFROMATION_ERROR "Error Accured While Retriving Information"
+#define INSERTING_INFORMATION_ERROR "Error Accured While Inserting Information"
+#pragma warning(disable : 4996)
+
+bool pairCompare(const pair<int, string>& first, const pair<int, string>& second);
 
 DataBase::DataBase() : _filename(DB_NAME), _currGameId(0)
 {
@@ -31,7 +39,7 @@ DataBase::DataBase() : _filename(DB_NAME), _currGameId(0)
 			res = sqlite3_exec(this->_db, sqlStatement, nullptr, nullptr, &errMessage);
 			if (res != SQLITE_OK)
 				throw exception("Database Problem");
-			sqlStatement = "CREATE TABLE t_players_answers(game_id INTEGER NOT NULL, username TEXT NOT NULL, question_id INTEGER NOT NULL, player_answer TEXT NOT NULL, is_correct INTEGER NOT NULL, answer_time INTEGER NOT NULL, PRIMARY KEY(game_id, username, question_id), FOREIGN KEY(game_id) REFERENCES t_games(game_id), FOREIGN KEY(username) REFERENCES t_users(username), FOREIGN KEY(question_id) REFERENCES t_questions(question_id));";
+			sqlStatement = "CREATE TABLE t_players_answers(game_id INTEGER NOT NULL, username TEXT NOT NULL, question_id INTEGER NOT NULL, player_answer TEXT NOT NULL, is_correct INTEGER NOT NULL, answer_time INTEGER NOT NULL, FOREIGN KEY(game_id) REFERENCES t_games(game_id), FOREIGN KEY(username) REFERENCES t_users(username), FOREIGN KEY(question_id) REFERENCES t_questions(question_id));";
 			res = sqlite3_exec(this->_db, sqlStatement, nullptr, nullptr, &errMessage);
 			if (res != SQLITE_OK)
 				throw exception("Database Problem");
@@ -61,12 +69,22 @@ DataBase::DataBase() : _filename(DB_NAME), _currGameId(0)
 			res = sqlite3_exec(_db, sqlStatement, nullptr, nullptr, &errMessage);
 			if (res != SQLITE_OK)
 				throw exception("Question Insert Problem");
-
-			sqlStatement = "INSERT INTO t_questions (question, correct_ans, ans2, ans3, ans4) VALUES ('What is Eyal's Shield in Math?', '95', '90', '85', '96');";
-			res = sqlite3_exec(_db, sqlStatement, nullptr, nullptr, &errMessage);
-			if (res != SQLITE_OK)
-				throw exception("Question Insert Problem");
 		}
+		char* sqlStatement = "Select * From t_games;";
+		sqlite3_stmt* stmt;
+		int counter = 0;
+		res = sqlite3_prepare_v2(_db, sqlStatement, -1, &stmt, NULL);
+		while (1)
+		{
+			int s;
+
+			s = sqlite3_step(stmt);
+			if (s == SQLITE_ROW)
+				counter++;
+			else
+				break;
+		}
+		this->_currGameId = counter;
 	}
 	catch (exception& e)
 	{
@@ -159,51 +177,153 @@ bool DataBase::isUserAndPassMatch(string username, string password)
 
 vector<Question*> DataBase::initQuestions(int questionsNo)
 {
-	int i = 1;
-	string sqlStatement = "SELECT * FROM t_questions";
-	sqlite3_stmt *stmt;
 	vector<Question*> questionsVector;
-	if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
-		return questionsVector;//somthing went wrong
-	while (1)
-	{
-		int s;
-
-		s = sqlite3_step(stmt);//get first row
-		if (s == SQLITE_ROW)
-		{
-			string question = (char*)sqlite3_column_text(stmt, 1);
-			string correctAns = (char*)sqlite3_column_text(stmt, 2);
-			string ans2 = (char*)sqlite3_column_text(stmt, 3);
-			string ans3 = (char*)sqlite3_column_text(stmt, 4);
-			string ans4 = (char*)sqlite3_column_text(stmt, 5);
-			Question* newQuestion = new Question(i, question, correctAns, ans2, ans3, ans4);//not sure if i sould free this memory later, also need to check if push_back shellow copy or not
-			questionsVector.push_back(newQuestion);
-			i++;
-		}
-		else if (s == SQLITE_DONE)
-		{
-			break;
-		}
-		else
-		{
-			return questionsVector;//somthing went wrong
-		}
-	}
-	int vSize = questionsVector.size();
 	srand(time(NULL));
-	while (vSize > questionsNo)//randomize to get random questions from data base
+	try
 	{
-		int randIndex = rand() % vSize;
-		questionsVector.erase(questionsVector.begin() + randIndex);
-		vSize--;
+		int i = 1;
+		string sqlStatement = "SELECT * FROM t_questions";
+		sqlite3_stmt *stmt;
+		if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
+			throw exception(RETRIVING_INFROMATION_ERROR);
+		while (1)
+		{
+			int s;
+
+			s = sqlite3_step(stmt);//get first row
+			if (s == SQLITE_ROW)
+			{
+				string question = (char*)sqlite3_column_text(stmt, 1);
+				string correctAns = (char*)sqlite3_column_text(stmt, 2);
+				string ans2 = (char*)sqlite3_column_text(stmt, 3);
+				string ans3 = (char*)sqlite3_column_text(stmt, 4);
+				string ans4 = (char*)sqlite3_column_text(stmt, 5);
+				Question* newQuestion = new Question(i, question, correctAns, ans2, ans3, ans4);//not sure if i sould free this memory later, also need to check if push_back shellow copy or not
+				questionsVector.push_back(newQuestion);
+				i++;
+			}
+			else if (s == SQLITE_DONE)
+			{
+				break;
+			}
+			else
+			{
+				sqlite3_finalize(stmt);
+				throw exception(RETRIVING_INFROMATION_ERROR);
+			}
+		}
+		int vSize = questionsVector.size();
+		while (vSize > questionsNo)//randomize to get random questions from data base
+		{
+			int randIndex = rand() % vSize;
+			questionsVector.erase(questionsVector.begin() + randIndex);
+			vSize--;
+		}
+		sqlite3_finalize(stmt);
+		return questionsVector;
 	}
-	return questionsVector;
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+		return questionsVector;
+	}
 }
 
-vector<Question*> DataBase::getBestScores()
+vector<pair<int, string>> DataBase::getBestScores()
 {
-	return vector<Question*>();
+	vector<pair<int, string>> bestScores;
+	try
+	{
+		string sqlStatement = "SELECT username, count(is_correct) AS correctAns FROM t_players_answers GROUP BY username ORDER BY correctAns LIMIT 3;";//not sure if working - need to get the top 3 best players with the most correct answers 
+		sqlite3_stmt *stmt;
+		if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
+			throw exception(RETRIVING_INFROMATION_ERROR);//somthing went wrong
+		while (1)
+		{
+			int s;
+
+			s = sqlite3_step(stmt);//get first row
+			if (s == SQLITE_ROW)
+			{
+				string username = (char*)sqlite3_column_text(stmt, 0);//not sure if its working
+				string correctAnswers = (char*)sqlite3_column_text(stmt, 1);
+				int correctAnswersCount = atoi(correctAnswers.c_str());
+				pair<int, string> userScore(correctAnswersCount, username);//its in map because its easier to work with
+				bestScores.push_back(userScore);
+			}
+			else if (s == SQLITE_DONE)
+			{
+				break;
+			}
+			else
+			{
+				sqlite3_finalize(stmt);
+				throw exception(RETRIVING_INFROMATION_ERROR);
+			}
+		}
+		sort(bestScores.begin(), bestScores.end(), pairCompare);
+		sqlite3_finalize(stmt);
+		return bestScores;
+	}
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+		return bestScores;
+	}
+}
+
+/// Function to compare between the pairs of the vector. for the sort function.
+bool pairCompare(const pair<int, string>& first, const pair<int, string>& second)
+{
+	return first.first > second.first;
+}
+
+vector<string> DataBase::getPersonalStatus(string username)
+{
+	vector<string> personalStatus;
+	try
+	{
+		string sqlStatement = "SELECT SUM(CASE WHEN is_correct IS NOT 0 THEN 1 ELSE 0 END) AS column1_count, MAX(game_id) AS column2_count, SUM(CASE WHEN question_id IS NOT NULL THEN 1 ELSE 0 END) AS column3_count, AVG(answer_time) AS column4_count FROM t_players_answers WHERE username = '" + username + "';";
+		sqlite3_stmt *stmt;
+		if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
+			throw exception(RETRIVING_INFROMATION_ERROR);
+		while (1)
+		{
+			int s;
+
+			s = sqlite3_step(stmt);//get first row
+			if (s == SQLITE_ROW)
+			{
+				string correctAnswers = (char*)sqlite3_column_text(stmt, 0);
+				int correctAnswersCount = atoi(correctAnswers.c_str());
+				string gamesCount = (char*)sqlite3_column_text(stmt, 1);
+				string questionsCount = (char*)sqlite3_column_text(stmt, 2);
+				string avgTime = (char*)sqlite3_column_text(stmt, 3);//not sure if its working.. gets data from the row
+				int avargeTime = atoi(avgTime.c_str());
+				string wrongAnswers = to_string(atoi(questionsCount.c_str()) - correctAnswersCount);
+				personalStatus.push_back(wrongAnswers);
+				personalStatus.push_back(avgTime);//insert data to vector
+				personalStatus.push_back(correctAnswers);
+				personalStatus.push_back(gamesCount);
+			}
+			else if (s == SQLITE_DONE)
+			{
+				break;
+			}
+			else
+			{
+				sqlite3_finalize(stmt);
+				throw exception(RETRIVING_INFROMATION_ERROR);
+			}
+		}
+		sqlite3_finalize(stmt);
+		return personalStatus;
+	}
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+		return personalStatus;
+	}
 }
 
 int DataBase::insertNewGame()
@@ -217,7 +337,7 @@ int DataBase::insertNewGame()
 	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK)
 	{
-		return this->_currGameId;//something went wrong a new game did not inserted
+		return -1;//something went wrong a new game did not inserted
 	}
 	else
 	{
@@ -243,11 +363,21 @@ bool DataBase::updateGameStatus(int id)
 
 bool DataBase::addAnswerToPlayer(int gameId, string username, int questionId, string answer, bool isCorrect, int answerTime)
 {
-	string sqlStatement = "INSERT INTO t_players_answers(game_id, username, question_id, player_answer, is_correct, answer_time) VALUES('" + to_string(gameId) + "', '" + username + "', '" + to_string(questionId) + "', '" + answer + "', '" + to_string(isCorrect) + "', '" + to_string(answerTime) + "');";//not sure if working
-	char* errMessage = nullptr;
-	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
-	if (res != SQLITE_OK)
-		return false;//something went wrong
-	else
-		return true;
+	int correctAns = isCorrect;
+	try
+	{
+		string sqlStatement = "INSERT INTO t_players_answers(game_id, username, question_id, player_answer, is_correct, answer_time) VALUES('" + to_string(gameId) + "', '" + username + "', '" + to_string(questionId) + "', '" + answer + "', '" + to_string(correctAns) + "', '" + to_string(answerTime) + "');";//not sure if working
+		char* errMessage = nullptr;
+		int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, &errMessage);
+		if (res != SQLITE_OK)
+			throw exception(INSERTING_INFORMATION_ERROR);
+		else
+			return true;
+	}
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+		return false;
+	}
+
 }

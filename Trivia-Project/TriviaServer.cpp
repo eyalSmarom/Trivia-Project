@@ -412,7 +412,17 @@ void TriviaServer::handleGetBestScores(ReceivedMessage * message)
 	SOCKET clientSocket = message->getSock();
 	User* user = getUserBySocket(clientSocket);
 	string Message = to_string(Best_Scores_Response);
-	// ToDo...
+	
+	vector<pair<int, string>> bestPlayersScores = _db.getBestScores();
+
+	for (vector<pair<int, string>>::iterator it = bestPlayersScores.begin(); it != bestPlayersScores.end(); it++)
+	{
+		Message += Helper::getPaddedNumber(it->second.size(), 2);
+		Message += it->second;
+		Message += Helper::getPaddedNumber(it->first, 6);
+	}
+
+	user->send(Message);
 }
 
 void TriviaServer::handleReceivedMessage(ReceivedMessage* message)

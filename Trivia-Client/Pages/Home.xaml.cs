@@ -124,8 +124,8 @@ namespace Trivia_Client.Pages
 
             Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
             {
-                DisplayName = "My Scores",
-                Source = new Uri("./Pages/Options/MyScores.xaml", UriKind.Relative)
+                DisplayName = "Best Scores",
+                Source = new Uri(Paths.BestScores, UriKind.Relative)
             });
 
             Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()

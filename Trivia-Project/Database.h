@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <io.h>
+#include <map>
 
 using namespace std;
 
@@ -20,8 +21,8 @@ public:
 	bool addNewUser(string username, string password, string email);
 	bool isUserAndPassMatch(string username, string password);
 	vector<Question*> initQuestions(int questionsNo);
-	vector<Question*> getBestScores();
-	vector<string> getPersonalStatus();
+	vector<pair<int, string>> getBestScores();
+	vector<string> getPersonalStatus(string username);
 	int insertNewGame();
 	bool updateGameStatus(int status);
 	bool addAnswerToPlayer(int gameId, string username, int questionId, string answer, bool isCorrect, int answerTime);
@@ -36,4 +37,3 @@ private:
 	static int callbackBestScores(void*, int, char**, char**);
 	static int callbackPersonalStatus(void*, int, char**, char**);
 };
-
