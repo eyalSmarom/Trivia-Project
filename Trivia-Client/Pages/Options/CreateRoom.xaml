@@ -16,11 +16,11 @@
                     <Label Content="Room Name" Margin="0,37,199,162"/>
                     <TextBox x:Name="RoomName" Margin="167,32,10,162"></TextBox>
                     <Label Content="Number Of Players" Margin="0,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.49,0.5" HorizontalAlignment="Left" Width="104"/>
-                    <TextBox x:Name="PlayersNumber" Margin="167,72,10,121"></TextBox>
+                    <TextBox x:Name="PlayersNumber" Margin="167,72,10,121" KeyDown="Number_KeyDown"></TextBox>
                     <Label Content="Number Of Questions" HorizontalAlignment="Left" Margin="0,116,0,80"></Label>
-                    <TextBox x:Name="QuestionsNumber" Margin="167,113,10,80"></TextBox>
+                    <TextBox x:Name="QuestionsNumber" Margin="167,113,10,80" KeyDown="Number_KeyDown"></TextBox>
                     <Label Content="Question Answer Time" HorizontalAlignment="Left" Margin="0,157,0,41"></Label>
-                    <TextBox x:Name="QuestionTime" Margin="167,153,10,40" ></TextBox>
+                    <TextBox x:Name="QuestionTime" Margin="167,153,10,40" KeyDown="Number_KeyDown" ></TextBox>
                     <Label x:Name="ErrorMessage" Content="" Margin="325,220,-177,-50"></Label>
                     <Button Content="Create" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="325,243,0,-50" Click="Button_Click"/>
                     <Button Content="Default" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>

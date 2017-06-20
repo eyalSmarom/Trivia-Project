@@ -234,7 +234,7 @@ vector<pair<int, string>> DataBase::getBestScores()
 	vector<pair<int, string>> bestScores;
 	try
 	{
-		string sqlStatement = "SELECT username, count(is_correct) AS correctAns FROM t_players_answers GROUP BY username ORDER BY correctAns LIMIT 3;";//not sure if working - need to get the top 3 best players with the most correct answers 
+		string sqlStatement = "SELECT username, SUM(CASE WHEN is_correct IS NOT 0 THEN 1 ELSE 0 END) AS correctAns FROM t_players_answers GROUP BY username ORDER BY correctAns LIMIT 3;";//not sure if working - need to get the top 3 best players with the most correct answers 
 		sqlite3_stmt *stmt;
 		if (sqlite3_prepare_v2(this->_db, sqlStatement.c_str(), strlen(sqlStatement.c_str()) + 1, &stmt, NULL) != SQLITE_OK)
 			throw exception(RETRIVING_INFROMATION_ERROR);//somthing went wrong
@@ -248,7 +248,7 @@ vector<pair<int, string>> DataBase::getBestScores()
 				string username = (char*)sqlite3_column_text(stmt, 0);//not sure if its working
 				string correctAnswers = (char*)sqlite3_column_text(stmt, 1);
 				int correctAnswersCount = atoi(correctAnswers.c_str());
-				pair<int, string> userScore(correctAnswersCount, username);//its in map because its easier to work with
+				pair<int, string> userScore(correctAnswersCount, username);
 				bestScores.push_back(userScore);
 			}
 			else if (s == SQLITE_DONE)

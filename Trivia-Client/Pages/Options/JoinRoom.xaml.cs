@@ -36,25 +36,32 @@ namespace Trivia_Client.Pages.Options
         /// </summary>
         private void InitializeRooms()
         {
-            ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.AllRoomsList);
-            ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.AllRooms, Session.CurrentUser.SendBackToServer(ClientMessage).Replace("/0", String.Empty));
-
-            Dictionary<string, int> ExistingRooms = new Dictionary<string, int>(Convert.ToInt16(ServerMessage._Values[0]));
-
-            for(int i = 1; i <= Convert.ToInt16(ServerMessage._Values[0]) + 1 && Convert.ToInt16(ServerMessage._Values[0]) != 0; i += 2)
+            try
             {
-                ExistingRooms.Add(ServerMessage._Values[i + 1], Convert.ToInt32(ServerMessage._Values[i]));
+                ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.AllRoomsList);
+                ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.AllRooms, Session.CurrentUser.SendBackToServer(ClientMessage).Replace("/0", String.Empty));
+
+                Dictionary<string, int> ExistingRooms = new Dictionary<string, int>(Convert.ToInt16(ServerMessage._Values[0]));
+
+                for (int i = 1; i <= Convert.ToInt16(ServerMessage._Values[0]) + 1 && Convert.ToInt16(ServerMessage._Values[0]) != 0; i += 2)
+                {
+                    ExistingRooms.Add(ServerMessage._Values[i + 1], Convert.ToInt32(ServerMessage._Values[i]));
+                }
+
+                ListViewItem temp;
+                Rooms.Items.Clear();
+
+                foreach (var item in ExistingRooms)
+                {
+                    temp = new ListViewItem();
+                    temp.Content = item.Key;
+                    temp.Uid = item.Value.ToString();
+                    Rooms.Items.Add(temp);
+                }
             }
-
-            ListViewItem temp;
-            Rooms.Items.Clear();
-
-            foreach (var item in ExistingRooms)
+            catch(Exception Exc)
             {
-                temp = new ListViewItem();
-                temp.Content = item.Key;
-                temp.Uid = item.Value.ToString();
-                Rooms.Items.Add(temp);
+
             }
         }
 

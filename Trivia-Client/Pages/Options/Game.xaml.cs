@@ -89,32 +89,39 @@ namespace Trivia_Client.Pages.Options
 
         private void Answer_Click(int QuestionNumber)
         {
-            Timer.Abort(); // Stopping the timer.
-            string[] Values = new string[2];
-
-            Values[0] = QuestionNumber.ToString();
-            Values[1] = (Session.CurrentUser.GetGame().QuestionTime - Convert.ToInt16(Clock.Text)).ToString();
-
-            ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.Answer, Values);
-            ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.TrueFalse, Session.CurrentUser.SendBackToServer(ClientMessage));
-
-            Answer1.IsEnabled = false;
-            Answer2.IsEnabled = false;
-            Answer3.IsEnabled = false;
-            Answer4.IsEnabled = false;
-
-            if (ServerMessage._StringedMessage.Equals(ServerCodes.TrueFalse + "1"))
+            try
             {
-                CorrectAnswers++;
-                UpdateButtonColor(QuestionNumber, true);
+                Timer.Abort(); // Stopping the timer.
+                string[] Values = new string[2];
+
+                Values[0] = QuestionNumber.ToString();
+                Values[1] = (Session.CurrentUser.GetGame().QuestionTime - Convert.ToInt16(Clock.Text)).ToString();
+
+                ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.Answer, Values);
+                ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.TrueFalse, Session.CurrentUser.SendBackToServer(ClientMessage));
+
+                Answer1.IsEnabled = false;
+                Answer2.IsEnabled = false;
+                Answer3.IsEnabled = false;
+                Answer4.IsEnabled = false;
+
+                if (ServerMessage._StringedMessage.Equals(ServerCodes.TrueFalse + "1"))
+                {
+                    CorrectAnswers++;
+                    UpdateButtonColor(QuestionNumber, true);
+                }
+                else
+                {
+                    UpdateButtonColor(QuestionNumber, false);
+                }
+                Answer1.Dispatcher.Invoke((Action)(() => { }), DispatcherPriority.Render); // Forcing wpf to process the UI modification before the thread sleeps.
+                Thread.Sleep(500);
+                GetNextQuestion();
             }
-            else
+            catch(Exception Exc)
             {
-                UpdateButtonColor(QuestionNumber, false);
+
             }
-            Answer1.Dispatcher.Invoke((Action)(() => { }), DispatcherPriority.Render); // Forcing wpf to process the UI modification before the thread sleeps.
-            Thread.Sleep(500);
-            GetNextQuestion();
         }
 
         private void DefaultAnswer()

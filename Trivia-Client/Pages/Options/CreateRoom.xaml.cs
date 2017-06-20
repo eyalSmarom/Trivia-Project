@@ -35,32 +35,36 @@ namespace Trivia_Client.Pages
         /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string _RoomName, _PlayersNumber, _QuestionNumber, _QuestionTime;
-            string[] Values = new string[4];
-            _RoomName = RoomName.Text;
-            _PlayersNumber = PlayersNumber.Text;
-            _QuestionNumber = QuestionsNumber.Text;
-            _QuestionTime = QuestionTime.Text;
-            if (CheckValidity(_PlayersNumber, _QuestionNumber, _QuestionTime))
+            try
             {
-                Room CurrRoom = new Room(Convert.ToInt32(_QuestionNumber), Convert.ToInt32(_PlayersNumber), Convert.ToInt32(_QuestionTime), true, _RoomName);
-         
-                Values[0] = _RoomName;
-                Values[1] = _PlayersNumber;
-                Values[2] = _QuestionNumber;
-                Values[3] = _QuestionTime;
+                string _RoomName, _PlayersNumber, _QuestionNumber, _QuestionTime;
+                string[] Values = new string[4];
+                _RoomName = RoomName.Text;
+                _PlayersNumber = PlayersNumber.Text;
+                _QuestionNumber = QuestionsNumber.Text;
+                _QuestionTime = QuestionTime.Text;
+                if (CheckValidity(_PlayersNumber, _QuestionNumber, _QuestionTime))
+                {
+                    Room CurrRoom = new Room(Convert.ToInt32(_QuestionNumber), Convert.ToInt32(_PlayersNumber), Convert.ToInt32(_QuestionTime), true, _RoomName);
 
-                ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.CreateRoom, Values);
-                if (HandleCreateRoom(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty), CurrRoom))
-                {
-                    Session.CurrentUser.SetRoom(CurrRoom);
-                    frame.Source = new Uri(Paths.RoomPage, UriKind.Relative);
-                }
-                else
-                {
-                    ErrorMessage.Content = "Failed Creating The Room...";
+                    Values[0] = _RoomName;
+                    Values[1] = _PlayersNumber;
+                    Values[2] = _QuestionNumber;
+                    Values[3] = _QuestionTime;
+
+                    ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.CreateRoom, Values);
+                    if (HandleCreateRoom(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty), CurrRoom))
+                    {
+                        Session.CurrentUser.SetRoom(CurrRoom);
+                        frame.Source = new Uri(Paths.RoomPage, UriKind.Relative);
+                    }
+                    else
+                    {
+                        ErrorMessage.Content = "Failed Creating The Room...";
+                    }
                 }
             }
+            catch(Exception Exc) { ErrorMessage.Content = "Stop Trying Yoav..."; }
         }
 
         /// <summary>
@@ -95,6 +99,13 @@ namespace Trivia_Client.Pages
         /// <returns>True if created properly, false if not</returns>
         public bool HandleCreateRoom(string ReturnedMessage, Room CurrRoom)
         {
+            byte[] bytes = new byte[1024];
+
+            if (ReturnedMessage.Equals(ServerCodes.CloseRoom))
+            {
+                Session.CurrentUser.GetSocket().Receive(bytes);
+                ReturnedMessage = Encoding.ASCII.GetString(bytes);
+            }
             if (ReturnedMessage.Substring(0, 4).Equals(ServerCodes.CreateRoomSuccess))
             {
                 ReturnedMessage = ReturnedMessage.Substring(4);
@@ -133,9 +144,37 @@ namespace Trivia_Client.Pages
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             RoomName.Text = Session.CurrentUser.GetUsername() + "'s Room";
-            PlayersNumber.Text = "9";
-            QuestionsNumber.Text = "5";
-            QuestionTime.Text = "15";
+            PlayersNumber.Text = "5";
+            QuestionsNumber.Text = "4";
+            QuestionTime.Text = "30";
+        }
+
+        /// <summary>
+        /// Prevents from the textbox to accept non-numerical values.
+        /// </summary>
+        private void Number_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Determine whether the keystroke is a number from the top of the keyboard.
+            if (e.Key < Key.D0 || e.Key > Key.D9)
+            {
+                // Determine whether the keystroke is a number from the keypad.
+                if (e.Key < Key.NumPad0 || e.Key > Key.NumPad9)
+                {
+                    // Determine whether the keystroke is a backspace.
+                    if (e.Key != Key.Back)
+                    {
+                        // A non-numerical keystroke was pressed.
+                        // Set the flag to true and evaluate in KeyPress event.
+                        e.Handled = true;
+                    }
+                }
+            }
+
+            // Determine wheter the keystroke is a space
+            if(e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
         }
     }
 }
