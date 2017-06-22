@@ -8,6 +8,10 @@
 	#define Sign_In_Already_Connected 2
 	#define Sign_In_Fail 3
 
+#define Forgot_Password_Response 103
+	#define Forgot_Password_Success 0
+	#define Forgot_Password_Failure 1
+
 #define Sign_Up_Response 104
 	#define Sign_Up_Success 0
 	#define Sign_Up_Pass_Illegal 1
@@ -40,6 +44,7 @@
 
 #define Sign_In_Request 200
 #define Sign_Out_Request 201
+#define Forget_Password_Request 202
 #define Sign_Up_Request 203
 #define All_Rooms_List_Request 205
 #define All_Room_Users_Request 207

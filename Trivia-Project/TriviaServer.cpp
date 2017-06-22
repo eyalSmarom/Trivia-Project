@@ -201,6 +201,24 @@ bool TriviaServer::handleSignUp(ReceivedMessage* message)
 	}
 }
 
+void TriviaServer::handleForgotPassword(ReceivedMessage* message)
+{
+	SOCKET clientSocket = message->getSock(); // getting the client's socket.
+	string username, Message = to_string(Forgot_Password_Response);
+
+	username = message->getValues()[0];
+	
+	if (_db.isUserExists(username))
+	{
+		// TODO: Send An Email To The User 
+		Message += to_string(Forgot_Password_Success);
+	}
+	else
+		Message += to_string(Forgot_Password_Failure);
+
+	Helper::sendData(clientSocket, Message);
+}
+
 void TriviaServer::handleSignout(ReceivedMessage* message)
 {
 	SOCKET clientSocket = message->getSock(); // getting the client's socket
@@ -461,6 +479,10 @@ void TriviaServer::handleReceivedMessage(ReceivedMessage* message)
 			handleSignout(message);
 			break;
 
+		case Forget_Password_Request:
+			handleForgotPassword(message);
+			break;
+
 		case Sign_Up_Request:
 			handleSignUp(message);
 			break;
@@ -543,6 +565,12 @@ ReceivedMessage* TriviaServer::buildRecieveMessage(SOCKET socket, int num)
 				bytes = Helper::getIntPartFromSocket(socket, Two_Bytes_Int_Num);
 				parameters.push_back(string(Helper::getStringPartFromSocket(socket, bytes))); // name/password/email
 			}
+			return new ReceivedMessage(socket, num, parameters);
+			break;
+
+		case Forget_Password_Request:
+			bytes = Helper::getIntPartFromSocket(socket, Two_Bytes_Int_Num);
+			parameters.push_back(string(Helper::getStringPartFromSocket(socket, bytes))); // username
 			return new ReceivedMessage(socket, num, parameters);
 			break;
 

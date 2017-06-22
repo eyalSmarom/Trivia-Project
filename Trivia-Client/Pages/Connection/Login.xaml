@@ -22,6 +22,8 @@
                     <PasswordBox x:Name="Password" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="87,67,0,0" Width="120" RenderTransformOrigin="0.731,0.295" Grid.ColumnSpan="2"/>
                     <Label Margin="87,165,89,29" x:Name="ErrorMessage" Grid.ColumnSpan="2" />
                     <Button Content="Login" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="87,118,0,0" Click="Button_Click" Grid.ColumnSpan="2"/>
+                    <Button Content="I Forgot My Password" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Grid.ColumnSpan="2" Margin="50,165,0,0" Click="Button_Click_1"/>
+
                 </Grid>
             </StackPanel>
         </ScrollViewer>

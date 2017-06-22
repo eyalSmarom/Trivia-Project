@@ -101,5 +101,19 @@ namespace Trivia_Client.Pages
         {
         }
         #endregion
+
+        /// <summary>
+        /// Function to send an email to the person that forgot his password
+        /// </summary>
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (Username.Text != null)
+            {
+                ClientReceivedMessage ClientMessage = new ClientReceivedMessage(ClientCodes.ForgotPassword, new string[] { Username.Text });
+                ServerReceivedMessage ServerMessage = new ServerReceivedMessage(ServerCodes.ForgotPassword, Session.CurrentUser.SendBackToServer(ClientMessage));
+            }
+            else
+                ErrorMessage.Content = "Please enter your Username in the Username TextBox";
+        }
     }
 }

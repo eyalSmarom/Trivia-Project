@@ -90,7 +90,7 @@ namespace Trivia_Client
             {
                 ClientSocket.Send(ToSend);
                 int bytesRec = ClientSocket.Receive(ToRecieve);
-                return Encoding.ASCII.GetString(ToRecieve).Replace("\0", String.Empty);
+                return Encoding.ASCII.GetString(ToRecieve).Replace("\0", String.Empty).Replace("/0", String.Empty);
             }
             catch(Exception e) { return null; }
         }
@@ -182,6 +182,9 @@ namespace Trivia_Client
                 case ClientCodes.SignIn:
                     StringedSignIn();
                     break;
+                case ClientCodes.ForgotPassword:
+                    StringedForgotPassword();
+                    break;
                 case ClientCodes.SignUp:
                     StringedSignUp();
                     break;
@@ -198,6 +201,12 @@ namespace Trivia_Client
                     StringedAnswer();
                     break;
             }
+        }
+
+        private void StringedForgotPassword()
+        {
+            _StringedMessage += _Values[0].Length.ToString().PadLeft(2, '0'); // username size
+            _StringedMessage += _Values[0]; // username
         }
 
         public void StringedSignIn()
@@ -270,6 +279,10 @@ namespace Trivia_Client
 
             switch(Code)
             {
+                case ServerCodes.ForgotPassword:
+                    ParameteredForgotPassword();
+                    break;
+
                 case ServerCodes.AllRooms:
                     ParameteredAllRooms();
                     break;
@@ -297,7 +310,17 @@ namespace Trivia_Client
                 case ServerCodes.PersonalState:
                     ParameteredPersonalState();
                     break;
+
+                    
             }
+        }
+
+        private void ParameteredForgotPassword()
+        {
+            string temp = _StringedMessage;
+
+            if (!temp.Equals(ServerCodes.ForgotPasswordSuccess))
+                ErrorMessage = new Exception("Sending you an email was failed...");
         }
 
         public void ParameteredAllRooms()
@@ -480,6 +503,7 @@ namespace Trivia_Client
     {
         public const string SignIn = "200";
         public const string SignOut = "201";
+        public const string ForgotPassword = "202";
         public const string SignUp = "203";
         public const string AllRoomsList = "205";
         public const string AllRoomUsers = "207";
@@ -503,6 +527,11 @@ namespace Trivia_Client
         public const string SignInAlreadyConnected = "1022";
         public const string SignInFail = "1023";
         #endregion // using Regions to make code more easier to read.
+        #region ForgotPassword
+        public const string ForgotPassword = "103";
+        public const string ForgotPasswordSuccess = "1030";
+        public const string ForgotPasswordFailure = "1031";
+        #endregion
         #region SignUp
         public const string SignUpSuccess = "1040";
         public const string SignUpPassIllegal = "1041";

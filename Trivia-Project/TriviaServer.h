@@ -37,6 +37,7 @@ class TriviaServer
 
 		User* handleSignIn(ReceivedMessage* message);
 		bool handleSignUp(ReceivedMessage* message);
+		void handleForgotPassword(ReceivedMessage* message);
 		void handleSignout(ReceivedMessage* message);
 
 		void handleLeaveGame(ReceivedMessage* message);
