@@ -231,7 +231,7 @@ void TriviaServer::handleStartGame(ReceivedMessage* message)
 
 	try
 	{
-		Game* newGame = new Game(user->getRoom()->getUsers(), user->getRoom()->getQuestionNo(), _db); // create a new game.
+		Game* newGame = new Game(user->getRoom()->getUsers(), user->getRoom()->getQuestionNo(), _db, user->getRoom()->getQuestions()); // create a new game.
 		_roomsList.erase(roomId); // erase the room
 		newGame->sendFirstQuestion(); // send the first question to the players.
 	}
@@ -266,7 +266,7 @@ bool TriviaServer::handleCreateRoom(ReceivedMessage* message)
 	if (user != nullptr)
 	{
 		_roomIdSequence++;
-		if (user->createRoom(_roomIdSequence, values[0], stoi(values[1], 0, 10), stoi(values[2], 0, 10), stoi(values[3], 0, 10)))
+		if (user->createRoom(_roomIdSequence, values[0], stoi(values[1], 0, 10), stoi(values[2], 0, 10), stoi(values[3], 0, 10), _db))
 		{
 			_roomsList.insert(pair<int, Room*>(_roomIdSequence, user->getRoom()));
 			Message += to_string(Create_Room_Success);

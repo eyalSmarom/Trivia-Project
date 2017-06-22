@@ -64,7 +64,7 @@ namespace Trivia_Client.Pages
                     }
                 }
             }
-            catch(Exception Exc) { ErrorMessage.Content = "Stop Trying Yoav..."; }
+            catch(Exception Exc) { ErrorMessage.Content = "Server Error... Please go out of this page and try again..."; }
         }
 
         /// <summary>

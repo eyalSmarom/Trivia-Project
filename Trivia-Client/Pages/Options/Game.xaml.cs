@@ -120,7 +120,8 @@ namespace Trivia_Client.Pages.Options
             }
             catch(Exception Exc)
             {
-
+                Session.CurrentUser.SetGame(null);
+                frame.Source = new Uri(Paths.Home, UriKind.Relative);
             }
         }
 

@@ -57,11 +57,11 @@ void User::clearRoom()
 	this->_currRoom = nullptr;
 }
 
-bool User::createRoom(int roomId, string roomName, int maxUsers, int questionsNo, int questionTime)
+bool User::createRoom(int roomId, string roomName, int maxUsers, int questionsNo, int questionTime, DataBase& db)
 {
 	if (this->_currRoom != nullptr)
 		return false;
-	this->_currRoom = new Room(roomId, this, roomName, maxUsers, questionsNo, questionTime);
+	this->_currRoom = new Room(roomId, this, roomName, maxUsers, questionsNo, questionTime, db);
 	return true;
 }
 

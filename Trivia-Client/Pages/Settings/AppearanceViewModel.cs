@@ -10,7 +10,7 @@ using System.Windows.Media;
 namespace Trivia_Client.Pages.Settings
 {
     /// <summary>
-    /// A simple view model for configuring theme, font and accent colors.
+    /// A simple view model for configuring theme(Dark/Light), font and accent colors.
     /// </summary>
     public class AppearanceViewModel
         : NotifyPropertyChanged
@@ -18,7 +18,6 @@ namespace Trivia_Client.Pages.Settings
         private const string FontSmall = "small";
         private const string FontLarge = "large";
 
-        // 20 accent colors from Windows Phone 8
         private Color[] accentColors = new Color[]{
             Color.FromRgb(0xa4, 0xc4, 0x00),   // lime
             Color.FromRgb(0x60, 0xa9, 0x17),   // green

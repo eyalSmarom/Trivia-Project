@@ -56,6 +56,7 @@ namespace Trivia_Client.Pages.Options
                     temp = new ListViewItem();
                     temp.Content = item.Key;
                     temp.Uid = item.Value.ToString();
+                    temp.AddHandler(ListViewItem.MouseDoubleClickEvent, new RoutedEventHandler(JoinRoomButton_Click));
                     Rooms.Items.Add(temp);
                 }
             }

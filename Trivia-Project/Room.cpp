@@ -1,9 +1,12 @@
 #include "Room.h"
 #include "User.h"
+#include "Question.h"
+#include "Database.h"
 
-Room::Room(int id, User* admin, string name, int maxUsers, int questionsNo, int questionTime) : _id(id), _admin(admin), _name(name), _maxUsers(maxUsers), _questionNo(questionsNo), _questionTime(questionTime)
+Room::Room(int id, User* admin, string name, int maxUsers, int questionsNo, int questionTime, DataBase& db) : _id(id), _admin(admin), _name(name), _maxUsers(maxUsers), _questionNo(questionsNo), _questionTime(questionTime)
 {
 	_users.push_back(admin);
+	_questions = db.initQuestions(questionsNo);
 }
 
 bool Room::joinRoom(User* user)
@@ -101,4 +104,9 @@ int Room::getQuestionTime()
 int Room::getMaxUsers()
 {
 	return _maxUsers;
+}
+
+vector<Question*> Room::getQuestions()
+{
+	return vector<Question*>(_questions);
 }

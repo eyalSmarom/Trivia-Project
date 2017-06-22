@@ -7,7 +7,7 @@
 int Game::_currentTurnAnswers = 0;
 map<string, int> Game::_results = map<string, int>();
 
-Game::Game(const vector<User*>& players, int questionNo, DataBase& db)
+Game::Game(const vector<User*>& players, int questionNo, DataBase& db, vector<Question*> questions)
 {
 	try
 	{
@@ -23,7 +23,7 @@ Game::Game(const vector<User*>& players, int questionNo, DataBase& db)
 		if (_gameId == -1)
 			throw exception("Couldn't insert game into the database");
 		else
-			_questions = _db.initQuestions(questionNo);
+			_questions = vector<Question*>(questions);
 
 		// initiate the players
 		_players = players;
@@ -126,6 +126,10 @@ bool Game::handleNextTurn()
 			sendQuestionToAllUsers();
 			return true;
 		}
+	}
+	else
+	{
+		_currQuestionIndex++;
 	}
 }
 

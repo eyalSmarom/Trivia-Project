@@ -3,11 +3,13 @@
 #include "Helper.h"
 
 class User;
+class Question;
+class DataBase;
 
 class Room
 {
 public:
-	Room(int id, User* admin, string name, int maxUsers, int questionsNo, int questionTime);
+	Room(int id, User* admin, string name, int maxUsers, int questionsNo, int questionTime, DataBase& db);
 	bool joinRoom(User* user);
 	void leaveRoom(User* user);
 	int closeRoom(User* user);
@@ -17,6 +19,7 @@ public:
 	int getQuestionTime();
 	int getId();
 	int getMaxUsers();
+	vector<Question*> getQuestions();
 	string getName();
 	User* getAdmin();
 	~Room();
@@ -29,6 +32,7 @@ private:
 	int _questionNo;
 	string _name;
 	int _id;
+	vector<Question*> _questions;
 
 	void sendMessage(string message);
 	void sendMessage(User* excludeUser, string message);

@@ -12,7 +12,7 @@ class Question;
 class Game
 {
 public:
-	Game(const vector<User*>& players, int questionNo, DataBase& db);
+	Game(const vector<User*>& players, int questionNo, DataBase& db, vector<Question*> questions);
 	Game(Game& other);
 	~Game();
 	void sendFirstQuestion();
