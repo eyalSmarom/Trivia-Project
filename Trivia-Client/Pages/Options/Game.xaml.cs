@@ -249,7 +249,19 @@ namespace Trivia_Client.Pages.Options
 
         public void OnNavigatedFrom(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)
         {
-            
+            var Window = Application.Current.MainWindow as ModernWindow;
+
+            Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
+            {
+                DisplayName = "Sign Out",
+                Source = new Uri(Paths.SignOut, UriKind.Relative)
+            });
+
+            Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
+            {
+                DisplayName = "Settings",
+                Source = new Uri(Paths.SettingsPage, UriKind.Relative)
+            });
         }
 
         public void OnNavigatedTo(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs e)

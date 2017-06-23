@@ -43,6 +43,8 @@ namespace Trivia_Client.Pages.Options
             var Window = Application.Current.MainWindow as ModernWindow;
 
             Window.TitleLinks.Clear();
+            Window.MenuLinkGroups.ElementAt(0).Links.RemoveAt(5);
+            Window.MenuLinkGroups.ElementAt(0).Links.RemoveAt(4);
 
             Room ThisRoom = Session.CurrentUser.GetRoom();
             ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.AllRoomUsers, new string[] { ThisRoom.Id.ToString().PadLeft(4, '0') });
@@ -150,6 +152,20 @@ namespace Trivia_Client.Pages.Options
                 Message = new ClientReceivedMessage(ClientCodes.LeaveRoom);
                 Session.CurrentUser.GetSocket().Send(Encoding.ASCII.GetBytes(Message._StringedMessage));
             }
+
+            var Window = Application.Current.MainWindow as ModernWindow;
+
+            Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
+            {
+                DisplayName = "Sign Out",
+                Source = new Uri(Paths.SignOut, UriKind.Relative)
+            });
+
+            Window.MenuLinkGroups.ElementAt(0).Links.Add(new FirstFloor.ModernUI.Presentation.Link()
+            {
+                DisplayName = "Settings",
+                Source = new Uri(Paths.SettingsPage, UriKind.Relative)
+            });
         }
         #endregion
 

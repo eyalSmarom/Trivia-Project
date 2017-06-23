@@ -38,18 +38,24 @@ namespace Trivia_Client.Pages
         /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string[] Values = new string[2]; // Setting an array for parameters.
-
-            Values[0] = _Username = Username.Text;
-            Values[1] = _Password = Password.Password;
-
-            ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.SignIn, Values);
-            if(HandleSignIn(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty)))
+            try
             {
-                frame.Source = new Uri(Paths.Home, UriKind.Relative);
+                string[] Values = new string[2]; // Setting an array for parameters.
+
+                Values[0] = _Username = Username.Text;
+                Values[1] = _Password = Password.Password;
+
+                ClientReceivedMessage Message = new ClientReceivedMessage(ClientCodes.SignIn, Values);
+                if (HandleSignIn(Session.CurrentUser.SendBackToServer(Message).Replace("\0", String.Empty)))
+                {
+                    frame.Source = new Uri(Paths.Home, UriKind.Relative);
+                }
+            }
+            catch(Exception Exc)
+            {
+                frame.Source = new Uri(Paths.Login, UriKind.Relative);
             }
         }
-
         /// <summary>
         /// Checking if the user was properly signed in
         /// </summary>
